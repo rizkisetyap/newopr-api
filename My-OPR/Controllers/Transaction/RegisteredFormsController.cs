@@ -7,10 +7,10 @@ namespace My_OPR.Controllers.Transaction
 {
     [Route("Api/[controller]")]
     [ApiController]
-    public class RegisteredFormsController : BaseController<RegisteredForm, RegisteredFormRepository, int>
+    public class RegisteredFormsController : BaseController<RegisteredForm, RegisterFormIsoRepository, int>
     {
-        private readonly RegisteredFormRepository _repository;
-        public RegisteredFormsController(RegisteredFormRepository repository) : base(repository)
+        private readonly RegisterFormIsoRepository _repository;
+        public RegisteredFormsController(RegisterFormIsoRepository repository) : base(repository)
         {
             _repository = repository;
         }
@@ -28,20 +28,12 @@ namespace My_OPR.Controllers.Transaction
             int result = _repository.SoftDelete(id);
             return Ok(result);
         }
-        [HttpGet]
-        [Route("filter")]
-        public IActionResult GetByServiceId([FromQuery] int? id)
-        {
-            var result = _repository.GetByServiceId(id);
 
-            if (result == null) return BadRequest();
-            return Ok(result);
-        }
         [HttpGet]
-        [Route("CheckNoReg")]
-        public IActionResult CheckNoReg()
+        [Route("CekAntrian")]
+        public IActionResult CheckAntrian(int? idSublayanan, int idLayanan)
         {
-            return Ok(_repository.checkNoUrut());
+            return Ok(_repository.cekAntrian(idSublayanan, idLayanan));
         }
     }
 
