@@ -96,9 +96,10 @@ namespace My_OPR.Repositories.Data
                 data.PhoneNumber = employee.PhoneNumber;
                 data.PositionId = employee.PositionId;
                 data.ServiceId = employee.ServiceId;
+                data.DateOfBirth = employee.DateOfBirth;
                 _context.Entry(data).State = EntityState.Modified;
 
-                Account account = _context.Accounts.Find(oldNpp);
+                Account account = _context.Accounts.Find(data.NPP);
                 string password = "BNI" + employee.NPP;
                 account.NPP = employee.NPP;
                 account.UserName = employee.NPP;
