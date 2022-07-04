@@ -20,6 +20,7 @@ namespace My_OPR.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<ExtUser> ExtUsers { get; set; }
         public DbSet<Group> Groups { get; set; }
+        public DbSet<ListApp> ListApps { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<Role> Roles { get; set; }
 

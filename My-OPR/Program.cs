@@ -34,6 +34,7 @@ services.AddScoped<CategoryRepository>();
 services.AddScoped<ContentRepository>();
 services.AddScoped<EventRepository>();
 services.AddScoped<GroupRepository>();
+services.AddScoped<ListAppRepository>();
 services.AddScoped<PositionRepository>();
 services.AddScoped<SliderRepository>();
 services.AddScoped<AccountRepository>();
