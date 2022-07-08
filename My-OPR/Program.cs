@@ -49,7 +49,8 @@ services.AddScoped<ZoomRepository>();
 
 #endregion
 #region 
-services.AddScoped<RegisteredFormRepository>();
+// services.AddScoped<RegisteredFormRepository>();
+services.AddScoped<RegisterFormIsoRepository>();
 services.AddScoped<ISOCoreRepository>();
 services.AddScoped<HistoryIsoRepository>();
 services.AddScoped<ISOSupportRepository>();

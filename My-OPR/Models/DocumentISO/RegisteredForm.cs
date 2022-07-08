@@ -15,7 +15,7 @@ namespace My_OPR.Models.DocumentISO
         // public int GroupId { get; set; }
         // [JsonIgnore]
         // public virtual Group? Group { get; set; }
-        public int SubLayananId { get; set; }
+        public int? SubLayananId { get; set; }
         [JsonIgnore]
         public virtual SubLayanan? Unit { get; set; }
 

@@ -1,7 +1,7 @@
 ﻿using My_OPR.Data;
 using My_OPR.Models.DocumentISO;
 using Microsoft.EntityFrameworkCore;
-
+using My_OPR.ViewModels;
 namespace My_OPR.Repositories.Data.DokumenIso
 {
     public class RegisteredFormRepository : GenericRepository<ApplicationDBContext, RegisteredForm, int>
@@ -43,5 +43,19 @@ namespace My_OPR.Repositories.Data.DokumenIso
 
             return _context.RegisteredForms.Where(x => x.ServiceId == id).ToList(); ;
         }
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
