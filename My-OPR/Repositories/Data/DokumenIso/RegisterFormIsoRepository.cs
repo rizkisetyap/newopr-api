@@ -111,7 +111,21 @@ namespace My_OPR.Repositories.Data.DokumenIso
         }
         public async Task<IEnumerable<NoForm>> GenerateListForms()
         {
-            var rg = _context.DetailRegisters.Include(x => x.RegisteredForm).Include(x => x.RegisteredForm.Service.Group).Include(x => x.RegisteredForm.Unit).ToList().Select(x => new NoForm
+            // var rg = _context.DetailRegisters.Include(x => x.RegisteredForm).Include(x => x.RegisteredForm.Service.Group).Include(x => x.RegisteredForm.Unit).ToList().Select(x => new NoForm
+            // {
+            //     RegId = x.Id,
+            //     No = "FRM.OPR." + x.RegisteredForm?.Service?.Group?.GroupName + "." + x.RegisteredForm?.Service?.ShortName + (x.RegisteredForm?.SubLayananId != null ? "." + x.RegisteredForm.Unit.Name : "") + "." + x.RegisteredForm?.NoUrut + "/" + (
+            //         x.CreateDate.Month < 10 ? "0" + x.CreateDate.Month.ToString() : x.CreateDate.Month.ToString()
+            //     ) + "/" + x.CreateDate.Year.ToString().Substring(2) + "/REV." + (x.Revisi < 10 ? "0" + x.Revisi : x.Revisi),
+            //     NamaForm = x.RegisteredForm.Name!
+
+            // });
+
+            var a = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Where(x => x.DetailRegisterId != null).Select(x => x.DetailRegisterId).ToList();
+
+            var b = _context.DetailRegisters.Include(x => x.RegisteredForm).Include(x => x.RegisteredForm.Service)
+            .Include(x => x.RegisteredForm.Service.Group).Include(x => x.RegisteredForm.Unit)
+            .Where(x => !a.Contains(x.Id)).ToList().Select(x => new NoForm
             {
                 RegId = x.Id,
                 No = "FRM.OPR." + x.RegisteredForm?.Service?.Group?.GroupName + "." + x.RegisteredForm?.Service?.ShortName + (x.RegisteredForm?.SubLayananId != null ? "." + x.RegisteredForm.Unit.Name : "") + "." + x.RegisteredForm?.NoUrut + "/" + (
@@ -120,8 +134,9 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 NamaForm = x.RegisteredForm.Name!
 
             });
+            ;
 
-            return rg;
+            return b;
         }
         // public async Task
     }

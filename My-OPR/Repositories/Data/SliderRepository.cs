@@ -45,6 +45,11 @@ namespace My_OPR.Repositories.Data
                 if (model.image != null)
                 {
                     var path = Path.Combine("public", "upload", "slider");
+                    var isExist = System.IO.Directory.Exists(path);
+                    if (!isExist)
+                    {
+                        System.IO.Directory.CreateDirectory(path);
+                    }
                     var base64str = model.image.base64str;
                     base64str = base64str.Substring(base64str.IndexOf(',') + 1);
                     Byte[] bytes = Convert.FromBase64String(base64str);
