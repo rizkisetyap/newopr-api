@@ -47,7 +47,7 @@ namespace My_OPR.Controllers.Transaction
                 if (model.FileIso != null)
                 {
 
-                    var path = Path.Combine("public", "Documet ISO", reg.Group, reg.Service);
+                    var path = Path.Combine("public", "Document ISO", reg.Group, reg.Service);
                     path = reg.Unit != null ? Path.Combine(path, reg.Unit) : path;
                     var isDirExist = System.IO.Directory.Exists(path);
                     if (!isDirExist)
