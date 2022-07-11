@@ -9,7 +9,7 @@ namespace My_OPR.Models.DocumentISO
         public int Id { get; set; }
         public string? Name { get; set; }
         public bool IsDelete { get; set; } = false;
-        public int ServiceId { get; set; }
+        public int? ServiceId { get; set; }
         [JsonIgnore]
         public virtual Service? Service { get; set; }
         // public int GroupId { get; set; }
@@ -19,7 +19,7 @@ namespace My_OPR.Models.DocumentISO
         [JsonIgnore]
         public virtual SubLayanan? Unit { get; set; }
 
-        public int KategoriDocumentId { get; set; }
+        public int? KategoriDocumentId { get; set; }
         public virtual KategoriDocument? KategoriDocument { get; set; }
         public int NoUrut { get; set; }
         public string? FormNumber { get; set; }
