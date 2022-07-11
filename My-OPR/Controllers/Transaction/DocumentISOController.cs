@@ -88,48 +88,49 @@ namespace My_OPR.Controllers.Transaction
 
         [HttpPut]
         [Route("/api/[controller]/edit")]
-        public IActionResult Edit( int id)
+        public IActionResult Edit(int id)
         {
-            try{
-            var filelama = _context.FileRegisteredIsos.Include(x=>x.DetailRegister).Where(x=>x.Id == id && x.IsDelete == false).FirstOrDefault();
+            try
+            {
+                var filelama = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Where(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
 
-            filelama.IsDelete = true;
-            filelama.DeleteDate = DateTime.Now;
-            _context.Update(filelama);
-            _context.SaveChanges();
+                filelama.IsDelete = true;
+                filelama.DeleteDate = DateTime.Now;
+                _context.Update(filelama);
+                _context.SaveChanges();
 
-            var idDetLama = filelama.DetailRegisterId;
+                var idDetLama = filelama.DetailRegisterId;
 
-            var detLama = _context.DetailRegisters.Where(x=>x.Id == idDetLama && x.isActive == true).FirstOrDefault();
+                var detLama = _context.DetailRegisters.Where(x => x.Id == idDetLama && x.isActive == true).FirstOrDefault();
 
-            detLama.isActive = false;
-            detLama.UpdateDate = DateTime.Now;
-            _context.Update(detLama);
-            _context.SaveChanges();
+                detLama.isActive = false;
+                detLama.UpdateDate = DateTime.Now;
+                _context.Update(detLama);
+                _context.SaveChanges();
 
-            DetailRegister detBaru = new DetailRegister();
-            detBaru.RegisteredFormId = detLama.RegisteredFormId;
-            detBaru.Revisi = detLama.Revisi + 1;
-            detBaru.isActive = true;
-            detBaru.CreateDate = DateTime.Now;
-            _context.Add(detBaru);
-            _context.SaveChanges();
+                DetailRegister detBaru = new DetailRegister();
+                detBaru.RegisteredFormId = detLama.RegisteredFormId;
+                detBaru.Revisi = detLama.Revisi + 1;
+                detBaru.isActive = true;
+                detBaru.CreateDate = DateTime.Now;
+                _context.Add(detBaru);
+                _context.SaveChanges();
 
-            FileRegisteredIso fileBaru = new FileRegisteredIso();
-            fileBaru.DetailRegisterId = detBaru.Id;
-            fileBaru.FileName = filelama.FileName;
-            fileBaru.FilePath = filelama.FilePath;
-            fileBaru.IsDelete = false;
-            fileBaru.CreateDate = DateTime.Now;
-            _context.Add(fileBaru);
-            _context.SaveChanges();
+                FileRegisteredIso fileBaru = new FileRegisteredIso();
+                fileBaru.DetailRegisterId = detBaru.Id;
+                fileBaru.FileName = filelama.FileName;
+                fileBaru.FilePath = filelama.FilePath;
+                fileBaru.IsDelete = false;
+                fileBaru.CreateDate = DateTime.Now;
+                _context.Add(fileBaru);
+                _context.SaveChanges();
 
-            return Ok();
+                return Ok();
             }
-            catch(SystemException){
+            catch (SystemException)
+            {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
     }
 }
