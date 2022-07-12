@@ -123,5 +123,10 @@ namespace My_OPR.Repositories.Data
             }
             throw new Exception("Employee not found!");
         }
+        // public IQueryable HBD()
+        // {
+        //     var today = DateTime.Now.ToShortDateString();
+        //     return _context.Employees.Where(x => x.DateOfBirth.ToShortDateString() == today);
+        // }
     }
 }

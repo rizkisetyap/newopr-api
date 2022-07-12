@@ -5,5 +5,6 @@ namespace My_OPR.ViewModels
     {
         public FileInfo? FileIso { get; set; }
         public FileRegisteredIso? FileRegisteredIso { get; set; }
+        public string? npp { get; set; }
     }
 }

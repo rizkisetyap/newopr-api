@@ -139,12 +139,12 @@ namespace My_OPR.Data
                 .WithMany(s => s.Schedulers)
                 .HasForeignKey(s => s.ZoomStatusId);
             #endregion
-            #region  master
-            modelBuilder.Entity<Service>()
-            .HasOne(g => g.Group)
-            .WithMany(s => s.Services)
-            .HasForeignKey(s => s.GroupId);
-            #endregion
+            // #region  master
+            // modelBuilder.Entity<Service>()
+            // .HasOne(g => g.Group)
+            // .WithMany(s => s.Services)
+            // .HasForeignKey(s => s.GroupId);
+            // #endregion
         }
     }
 }

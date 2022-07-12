@@ -32,9 +32,9 @@ namespace My_OPR.Controllers.Transaction
 
         [HttpGet]
         [Route("CekAntrian")]
-        public IActionResult CheckAntrian(int? idSublayanan, int idLayanan)
+        public IActionResult CheckAntrian(int? idSublayanan, int? idLayanan, int? GroupId)
         {
-            return Ok(_repository.cekAntrian(idSublayanan, idLayanan));
+            return Ok(_repository.cekAntrian(idSublayanan, idLayanan, GroupId));
         }
         [HttpPost]
         [Route("registerForm")]
@@ -60,6 +60,12 @@ namespace My_OPR.Controllers.Transaction
         {
             // var ListForms = null;
             return Ok(await _repository.GenerateListForms());
+        }
+        [HttpGet]
+        [Route("Filter")]
+        public IActionResult Filter(int? GroupId)
+        {
+            return Ok(_repository.ListFormByUserSignin(GroupId));
         }
 
 

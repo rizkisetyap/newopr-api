@@ -20,15 +20,10 @@ namespace My_OPR.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int? serviceId)
         {
-            List<SubLayanan> data;
-            if (serviceId != null)
-            {
-                data = await _context.Units.Where(x => x.IsDelete == false && x.ServiceId == serviceId).ToListAsync();
-            }
-            else
-            {
-                data = await _context.Units.Where(x => x.IsDelete == false).ToListAsync();
-            }
+
+
+            var data = await _context.Units.Where(x => x.IsDelete == false && x.ServiceId == serviceId).ToListAsync();
+
             return Ok(data);
         }
         [HttpPost]

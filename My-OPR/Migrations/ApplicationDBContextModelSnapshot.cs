@@ -84,6 +84,9 @@ namespace My_OPR.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
@@ -91,6 +94,8 @@ namespace My_OPR.Migrations
 
                     b.HasIndex("DetailRegisterId")
                         .IsUnique();
+
+                    b.HasIndex("ServiceId");
 
                     b.ToTable("FileRegisteredIsos");
                 });
@@ -230,6 +235,9 @@ namespace My_OPR.Migrations
                     b.Property<string>("FormNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -252,6 +260,8 @@ namespace My_OPR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("KategoriDocumentId");
 
@@ -948,7 +958,15 @@ namespace My_OPR.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("My_OPR.Models.Master.Service", "Services")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("DetailRegister");
+
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.HistoryISO", b =>
@@ -983,6 +1001,10 @@ namespace My_OPR.Migrations
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.RegisteredForm", b =>
                 {
+                    b.HasOne("My_OPR.Models.Master.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
                     b.HasOne("My_OPR.Models.DocumentISO.KategoriDocument", "KategoriDocument")
                         .WithMany("RegisteredForms")
                         .HasForeignKey("KategoriDocumentId");
@@ -994,6 +1016,8 @@ namespace My_OPR.Migrations
                     b.HasOne("My_OPR.Models.Master.SubLayanan", "Unit")
                         .WithMany()
                         .HasForeignKey("SubLayananId");
+
+                    b.Navigation("Group");
 
                     b.Navigation("KategoriDocument");
 
