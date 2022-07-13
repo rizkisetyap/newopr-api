@@ -54,6 +54,7 @@ services.AddScoped<RegisterFormIsoRepository>();
 services.AddScoped<ISOCoreRepository>();
 services.AddScoped<HistoryIsoRepository>();
 services.AddScoped<ISOSupportRepository>();
+services.AddScoped<DocumentISORepository>();
 #endregion
 
 builder.Services.AddAuthentication(options =>
