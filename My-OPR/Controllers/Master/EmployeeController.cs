@@ -38,7 +38,9 @@ namespace My_OPR.Controllers.Master
         {
             var now = DateTime.Now; 
             var convert = now.Date;
-            var result = _context.Employees.Where(x=>x.DateOfBirth.Date == convert);
+            var bulan = now.Month;
+            var tanggal = now.Day;
+            var result = _context.Employees.Where(x=>x.DateOfBirth.Day == tanggal && x.DateOfBirth.Month == bulan);
             return Ok(result);
         }
 
