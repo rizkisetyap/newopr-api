@@ -32,6 +32,16 @@ namespace My_OPR.Controllers.Master
             return Ok(_employeeRepository.Get(Id));
         }
 
+        [HttpGet]
+        [Route("/api/[controller]/Birthday")]
+        public IActionResult Birthday()
+        {
+            var now = DateTime.Now; 
+            var convert = now.Date;
+            var result = _context.Employees.Where(x=>x.DateOfBirth.Date == convert);
+            return Ok(result);
+        }
+
         [HttpPost]
         public ActionResult CreateEmployee(RegisterVM model)
         {
