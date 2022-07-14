@@ -45,7 +45,7 @@ namespace My_OPR.Controllers.Transaction
                 string filePath = "";
                 var reg = _context.DetailRegisters
                 .Include(x => x.RegisteredForm)
-                .Include(x => x.RegisteredForm.KategoriDocument)
+                .Include(x => x.RegisteredForm.JenisDokumen)
                 .Include(x => x.RegisteredForm.Unit)
                 .Include(x => x.RegisteredForm.Service)
                 .Include(x => x.RegisteredForm.Group)
@@ -103,7 +103,7 @@ namespace My_OPR.Controllers.Transaction
             var result = _context.FileRegisteredIsos
             .Include(x => x.DetailRegister)
             .Include(x => x.DetailRegister.RegisteredForm)
-            .Include(x => x.DetailRegister.RegisteredForm.KategoriDocument)
+            .Include(x => x.DetailRegister.RegisteredForm.JenisDokumen)
             .Include(x => x.DetailRegister.RegisteredForm.Service)
             .Include(x => x.DetailRegister.RegisteredForm.Service.Group)
             .Include(x => x.DetailRegister.RegisteredForm.Unit)
@@ -202,14 +202,14 @@ namespace My_OPR.Controllers.Transaction
             var result = _context.FileRegisteredIsos
             .Include(x => x.DetailRegister)
             .Include(x => x.DetailRegister.RegisteredForm)
-            .Include(x => x.DetailRegister.RegisteredForm.KategoriDocument)
+            .Include(x => x.DetailRegister.RegisteredForm.JenisDokumen)
             .Select(x => new
             {
                 Id = x.Id,
                 RegisterFormId = x.DetailRegister.RegisteredFormId,
                 FormName = x.DetailRegister.RegisteredForm.Name,
                 FormNumber = x.DetailRegister.RegisteredForm.FormNumber,
-                JenisDokumen = x.DetailRegister.RegisteredForm.KategoriDocument.Name,
+                JenisDokumen = x.DetailRegister.RegisteredForm.JenisDokumen.Name,
                 isActive = x.DetailRegister.isActive,
                 ServiceId = x.DetailRegister.RegisteredForm.ServiceId,
                 GroupId = x.DetailRegister.RegisteredForm.Service.GroupId,

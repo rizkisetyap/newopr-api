@@ -6,12 +6,12 @@ namespace My_OPR.Models.DocumentISO
     {
         public int Id { get; set; }
         public bool IsDelete { get; set; } = false;
-        public int IsoSupportId { get; set; }
-        public int Revision { get; set; } = 0;
+        public int? ISOCoreId { get; set; }
         [JsonIgnore]
-        public virtual ISOSupport? ISOSupport { get; set; }
-        public string? FilePath { get; set; }
+        public ISOCore? ISOCore { get; set; }
+        public int Revision { get; set; } = 0;
         public DateTime? CreateDate { get; set; } = DateTime.Now;
+        public DateTime? UpdateDate { get; set; }
 
     }
 }

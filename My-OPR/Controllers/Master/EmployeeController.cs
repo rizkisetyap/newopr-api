@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using My_OPR.Data;
 using My_OPR.Models.Master;
 using My_OPR.Repositories.Data;
 using My_OPR.ViewModels;
-using My_OPR.Data;
 namespace My_OPR.Controllers.Master
 {
     [Route("api/[controller]")]
@@ -36,9 +35,10 @@ namespace My_OPR.Controllers.Master
         [Route("/api/[controller]/Birthday")]
         public IActionResult Birthday()
         {
-            var now = DateTime.Now; 
-            var convert = now.Date;
-            var result = _context.Employees.Where(x=>x.DateOfBirth.Date == convert);
+            var now = DateTime.Now;
+            var day = now.Day;
+            var month = now.Month;
+            var result = _context.Employees.Where(x => x.DateOfBirth.Day == day && x.DateOfBirth.Month == month);
             return Ok(result);
         }
 

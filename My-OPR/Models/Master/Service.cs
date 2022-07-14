@@ -19,6 +19,8 @@ namespace My_OPR.Models.Master
         public virtual ICollection<RegisteredForm>? RegisteredForms { get; set; }
         [JsonIgnore]
         public virtual ICollection<Employee>? Employees { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<SubLayanan>? Units { get; set; }
     }
     public enum KategoriService
     {

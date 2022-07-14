@@ -32,9 +32,9 @@ namespace My_OPR.Controllers.Transaction
 
         [HttpGet]
         [Route("CekAntrian")]
-        public IActionResult CheckAntrian(int? idSublayanan, int? idLayanan, int? GroupId)
+        public IActionResult CheckAntrian(int? idSublayanan, int KategoriDokumenId)
         {
-            return Ok(_repository.cekAntrian(idSublayanan, idLayanan, GroupId));
+            return Ok(_repository.cekAntrian(idSublayanan, KategoriDokumenId));
         }
         [HttpPost]
         [Route("registerForm")]
@@ -67,7 +67,12 @@ namespace My_OPR.Controllers.Transaction
         {
             return Ok(_repository.ListFormByUserSignin(GroupId));
         }
-
+        [HttpGet]
+        [Route("search")]
+        public IActionResult Search(int ServiceId, int KategoriDocumentId, int? unitId)
+        {
+            return Ok(_repository.GetFormByServiceAndKategori(ServiceId, KategoriDocumentId, unitId));
+        }
 
 
     }

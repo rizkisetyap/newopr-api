@@ -88,6 +88,27 @@ namespace My_OPR.Controllers
                 return BadRequest();
             }
         }
+        [HttpGet]
+        [Route("layanan")]
+        public IActionResult GetByLayanan(int? id)
+        {
+            var result = _context.Units.Where(x => x.ServiceId == id);
+
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("Search")]
+        public IActionResult Search(int? GroupId)
+        {
+            var Search = (from U in _context.Units
+                          join S in _context.Services on U.ServiceId equals S.Id
+                          join G in _context.Groups on S.GroupId equals G.Id
+                          where G.Id == GroupId
+                          select U
+                ).ToList();
+
+            return Ok(Search);
+        }
 
     }
 }

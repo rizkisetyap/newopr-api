@@ -28,6 +28,12 @@ namespace My_OPR.Controllers.Master
         {
             return Ok(_groupRepository.SoftDelete(id));
         }
+        [HttpGet]
+        [Route("npp")]
+        public IActionResult GetByNpp(string? Npp)
+        {
+            return Ok(_groupRepository.GetByNpp(Npp));
+        }
 
 
 

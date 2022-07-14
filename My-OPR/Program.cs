@@ -51,10 +51,9 @@ services.AddScoped<ZoomRepository>();
 #region 
 // services.AddScoped<RegisteredFormRepository>();
 services.AddScoped<RegisterFormIsoRepository>();
-services.AddScoped<ISOCoreRepository>();
-services.AddScoped<HistoryIsoRepository>();
-services.AddScoped<ISOSupportRepository>();
+services.AddScoped<JenisDokumenRepository>();
 services.AddScoped<DocumentISORepository>();
+services.AddScoped<DokumenUtamaRepository>();
 #endregion
 
 builder.Services.AddAuthentication(options =>

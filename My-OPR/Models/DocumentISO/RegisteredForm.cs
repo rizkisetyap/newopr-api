@@ -19,8 +19,11 @@ namespace My_OPR.Models.DocumentISO
         [JsonIgnore]
         public virtual SubLayanan? Unit { get; set; }
 
-        public int? KategoriDocumentId { get; set; }
-        public virtual KategoriDocument? KategoriDocument { get; set; }
+        // public int? KategoriDocumentId { get; set; }
+        // public virtual KategoriDocument? KategoriDocument { get; set; }
+        public int? JenisDokumenId { get; set; }
+        [JsonIgnore]
+        public JenisDocument? JenisDokumen { get; set; }
         public int NoUrut { get; set; }
         public string? FormNumber { get; set; }
         [DataType(DataType.DateTime)]

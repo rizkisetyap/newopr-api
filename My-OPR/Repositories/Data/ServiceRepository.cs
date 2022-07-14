@@ -72,5 +72,11 @@ namespace My_OPR.Repositories.Data
             // }            
 
         }
+        public IQueryable GetByGroup(int? GroupId)
+        {
+            var result = _context.Services.Where(x => x.GroupId == GroupId);
+
+            return result;
+        }
     }
 }

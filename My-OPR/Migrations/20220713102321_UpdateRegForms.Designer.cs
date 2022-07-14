@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using My_OPR.Data;
 
@@ -11,9 +12,10 @@ using My_OPR.Data;
 namespace My_OPR.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220713102321_UpdateRegForms")]
+    partial class UpdateRegForms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,23 +113,23 @@ namespace My_OPR.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ISOCoreId")
-                        .HasColumnType("int");
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<int>("IsoSupportId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Revision")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ISOCoreId");
+                    b.HasIndex("IsoSupportId");
 
-                    b.ToTable("HistoryISOs");
+                    b.ToTable("HistoryISO");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
@@ -147,16 +149,10 @@ namespace My_OPR.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("JenisDocumentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JenisDokumenId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UnitId")
+                    b.Property<int>("Revision")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
@@ -164,11 +160,39 @@ namespace My_OPR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JenisDocumentId");
+                    b.ToTable("ISOCore");
+                });
 
-                    b.HasIndex("UnitId");
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOSupport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.ToTable("ISOCores");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ISOCoreId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RegisteredFormId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Revision")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ISOCoreId");
+
+                    b.HasIndex("RegisteredFormId");
+
+                    b.ToTable("ISOSupport");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
@@ -658,9 +682,14 @@ namespace My_OPR.Migrations
                     b.Property<string>("ShortName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SubLayananId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("SubLayananId");
 
                     b.ToTable("Services");
                 });
@@ -890,21 +919,6 @@ namespace My_OPR.Migrations
                     b.ToTable("ZoomStatuses");
                 });
 
-            modelBuilder.Entity("ServiceSubLayanan", b =>
-                {
-                    b.Property<int>("ServicesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ServicesId", "UnitsId");
-
-                    b.HasIndex("UnitsId");
-
-                    b.ToTable("ServiceSubLayanan");
-                });
-
             modelBuilder.Entity("My_OPR.Models.DocumentISO.DetailRegister", b =>
                 {
                     b.HasOne("My_OPR.Models.DocumentISO.RegisteredForm", "RegisteredForm")
@@ -935,26 +949,32 @@ namespace My_OPR.Migrations
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.HistoryISO", b =>
                 {
-                    b.HasOne("My_OPR.Models.DocumentISO.ISOCore", "ISOCore")
-                        .WithMany()
-                        .HasForeignKey("ISOCoreId");
+                    b.HasOne("My_OPR.Models.DocumentISO.ISOSupport", "ISOSupport")
+                        .WithMany("HistoryISOs")
+                        .HasForeignKey("IsoSupportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("ISOCore");
+                    b.Navigation("ISOSupport");
                 });
 
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOSupport", b =>
                 {
-                    b.HasOne("My_OPR.Models.DocumentISO.JenisDocument", "JenisDocument")
+                    b.HasOne("My_OPR.Models.DocumentISO.ISOCore", "ISOCore")
+                        .WithMany("Support")
+                        .HasForeignKey("ISOCoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("My_OPR.Models.DocumentISO.RegisteredForm", "RegisteredForm")
                         .WithMany()
-                        .HasForeignKey("JenisDocumentId");
+                        .HasForeignKey("RegisteredFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("My_OPR.Models.Master.SubLayanan", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId");
+                    b.Navigation("ISOCore");
 
-                    b.Navigation("JenisDocument");
-
-                    b.Navigation("Unit");
+                    b.Navigation("RegisteredForm");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
@@ -1061,6 +1081,10 @@ namespace My_OPR.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("My_OPR.Models.Master.SubLayanan", null)
+                        .WithMany("Services")
+                        .HasForeignKey("SubLayananId");
+
                     b.Navigation("Group");
                 });
 
@@ -1123,24 +1147,19 @@ namespace My_OPR.Migrations
                     b.Navigation("ZoomStatus");
                 });
 
-            modelBuilder.Entity("ServiceSubLayanan", b =>
-                {
-                    b.HasOne("My_OPR.Models.Master.Service", null)
-                        .WithMany()
-                        .HasForeignKey("ServicesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("My_OPR.Models.Master.SubLayanan", null)
-                        .WithMany()
-                        .HasForeignKey("UnitsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("My_OPR.Models.DocumentISO.DetailRegister", b =>
                 {
                     b.Navigation("FileRegisteredIso");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
+                {
+                    b.Navigation("Support");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOSupport", b =>
+                {
+                    b.Navigation("HistoryISOs");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
@@ -1204,6 +1223,11 @@ namespace My_OPR.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("RegisteredForms");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.Master.SubLayanan", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("My_OPR.Models.ZoomScheduler.ZoomModel", b =>
