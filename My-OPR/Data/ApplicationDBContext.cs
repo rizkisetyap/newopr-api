@@ -31,18 +31,19 @@ namespace My_OPR.Data
 
         #region Transaction
         public DbSet<Content> Contents { get; set; }
-        public DbSet<LaporanHarian> LaporanHarians { get; set; }
+        // public DbSet<LaporanHarian> LaporanHarians { get; set; }
         public DbSet<Presence> Presences { get; set; }
         #endregion
         #region document controller
         public DbSet<HistoryISO> HistoryISOs { get; set; }
         public DbSet<ISOCore> ISOCores { get; set; }
-        public DbSet<ISOSupport> ISOSupports { get; set; }
+        // public DbSet<ISOSupport> ISOSupports { get; set; }
         public DbSet<RegisteredForm> RegisteredForms { get; set; }
         public DbSet<KategoriDocument> KategoriDocuments { get; set; }
         public DbSet<FileRegisteredIso> FileRegisteredIsos { get; set; }
         public DbSet<DetailRegister> DetailRegisters { get; set; }
         public DbSet<SubLayanan> Units { get; set; }
+        public DbSet<JenisDocument> JenisDocuments { get; set; }
         #endregion
         #region Zoom
         public DbSet<Scheduler> Schedulers { get; set; }
@@ -108,9 +109,9 @@ namespace My_OPR.Data
             .WithOne(dr => dr.FileRegisteredIso);
 
             modelBuilder.Entity<RegisteredForm>()
-            .HasOne(rg => rg.KategoriDocument)
+            .HasOne(rg => rg.JenisDokumen)
             .WithMany(kd => kd.RegisteredForms)
-            .HasForeignKey(rg => rg.KategoriDocumentId);
+            .HasForeignKey(rg => rg.JenisDokumenId);
 
             // modelBuilder.Entity<KategoriDocument>()
             // .HasOne(kd => kd.RegisteredForms)
@@ -121,10 +122,10 @@ namespace My_OPR.Data
                 .WithMany(reg => reg.RegisteredForms)
                 .HasForeignKey(reg => reg.ServiceId);
             //history Iso
-            modelBuilder.Entity<HistoryISO>()
-                .HasOne(i => i.ISOSupport)
-                .WithMany(h => h.HistoryISOs)
-                .HasForeignKey(h => h.IsoSupportId);
+            // modelBuilder.Entity<HistoryISO>()
+            //     .HasOne(i => i.ISOSupport)
+            //     .WithMany(h => h.HistoryISOs)
+            //     .HasForeignKey(h => h.IsoSupportId);
 
             #endregion
 

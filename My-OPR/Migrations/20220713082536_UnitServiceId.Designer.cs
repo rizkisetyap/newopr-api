@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using My_OPR.Data;
 
@@ -11,9 +12,10 @@ using My_OPR.Data;
 namespace My_OPR.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220713082536_UnitServiceId")]
+    partial class UnitServiceId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,21 +113,21 @@ namespace My_OPR.Migrations
                     b.Property<DateTime?>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ISOCoreId")
-                        .HasColumnType("int");
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<int>("IsoSupportId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Revision")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ISOCoreId");
+                    b.HasIndex("IsoSupportId");
 
                     b.ToTable("HistoryISOs");
                 });
@@ -147,16 +149,10 @@ namespace My_OPR.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("JenisDocumentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JenisDokumenId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UnitId")
+                    b.Property<int>("Revision")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
@@ -164,14 +160,10 @@ namespace My_OPR.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JenisDocumentId");
-
-                    b.HasIndex("UnitId");
-
                     b.ToTable("ISOCores");
                 });
 
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOSupport", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -179,29 +171,28 @@ namespace My_OPR.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("DeleteDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ISOCoreId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("KategoriDokumenId")
+                    b.Property<int>("RegisteredFormId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("Revision")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("KategoriDokumenId");
+                    b.HasIndex("ISOCoreId");
 
-                    b.ToTable("JenisDocuments");
+                    b.HasIndex("RegisteredFormId");
+
+                    b.ToTable("ISOSupports");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.KategoriDocument", b =>
@@ -252,9 +243,6 @@ namespace My_OPR.Migrations
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("JenisDokumenId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("KategoriDocumentId")
                         .HasColumnType("int");
 
@@ -276,8 +264,6 @@ namespace My_OPR.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
-
-                    b.HasIndex("JenisDokumenId");
 
                     b.HasIndex("KategoriDocumentId");
 
@@ -325,6 +311,30 @@ namespace My_OPR.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AccountRoles");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.Master.AnomaliLaporan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Anomali")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Keterangan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("AnomaliLaporan");
                 });
 
             modelBuilder.Entity("My_OPR.Models.Master.Category", b =>
@@ -541,9 +551,6 @@ namespace My_OPR.Migrations
                     b.Property<DateTime?>("DeleteDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("GroupId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
@@ -557,8 +564,6 @@ namespace My_OPR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
 
                     b.ToTable("ListApps");
                 });
@@ -658,9 +663,14 @@ namespace My_OPR.Migrations
                     b.Property<string>("ShortName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SubLayananId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("SubLayananId");
 
                     b.ToTable("Services");
                 });
@@ -719,9 +729,6 @@ namespace My_OPR.Migrations
                     b.Property<int?>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ShortName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("datetime2");
 
@@ -770,6 +777,50 @@ namespace My_OPR.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Contents");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.Transaction.LaporanHarian", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("AnomaliId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ApprovalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeleteDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAnomaly")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDelete")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("TanggalTransaksi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnomaliId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("LaporanHarians");
                 });
 
             modelBuilder.Entity("My_OPR.Models.Transaction.Presence", b =>
@@ -890,21 +941,6 @@ namespace My_OPR.Migrations
                     b.ToTable("ZoomStatuses");
                 });
 
-            modelBuilder.Entity("ServiceSubLayanan", b =>
-                {
-                    b.Property<int>("ServicesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ServicesId", "UnitsId");
-
-                    b.HasIndex("UnitsId");
-
-                    b.ToTable("ServiceSubLayanan");
-                });
-
             modelBuilder.Entity("My_OPR.Models.DocumentISO.DetailRegister", b =>
                 {
                     b.HasOne("My_OPR.Models.DocumentISO.RegisteredForm", "RegisteredForm")
@@ -935,35 +971,32 @@ namespace My_OPR.Migrations
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.HistoryISO", b =>
                 {
+                    b.HasOne("My_OPR.Models.DocumentISO.ISOSupport", "ISOSupport")
+                        .WithMany("HistoryISOs")
+                        .HasForeignKey("IsoSupportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ISOSupport");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOSupport", b =>
+                {
                     b.HasOne("My_OPR.Models.DocumentISO.ISOCore", "ISOCore")
+                        .WithMany("Support")
+                        .HasForeignKey("ISOCoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("My_OPR.Models.DocumentISO.RegisteredForm", "RegisteredForm")
                         .WithMany()
-                        .HasForeignKey("ISOCoreId");
+                        .HasForeignKey("RegisteredFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ISOCore");
-                });
 
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
-                {
-                    b.HasOne("My_OPR.Models.DocumentISO.JenisDocument", "JenisDocument")
-                        .WithMany()
-                        .HasForeignKey("JenisDocumentId");
-
-                    b.HasOne("My_OPR.Models.Master.SubLayanan", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId");
-
-                    b.Navigation("JenisDocument");
-
-                    b.Navigation("Unit");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
-                {
-                    b.HasOne("My_OPR.Models.DocumentISO.KategoriDocument", "KategoriDokumen")
-                        .WithMany("JenisDocument")
-                        .HasForeignKey("KategoriDokumenId");
-
-                    b.Navigation("KategoriDokumen");
+                    b.Navigation("RegisteredForm");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.RegisteredForm", b =>
@@ -972,11 +1005,7 @@ namespace My_OPR.Migrations
                         .WithMany()
                         .HasForeignKey("GroupId");
 
-                    b.HasOne("My_OPR.Models.DocumentISO.JenisDocument", "JenisDokumen")
-                        .WithMany("RegisteredForms")
-                        .HasForeignKey("JenisDokumenId");
-
-                    b.HasOne("My_OPR.Models.DocumentISO.KategoriDocument", null)
+                    b.HasOne("My_OPR.Models.DocumentISO.KategoriDocument", "KategoriDocument")
                         .WithMany("RegisteredForms")
                         .HasForeignKey("KategoriDocumentId");
 
@@ -990,7 +1019,7 @@ namespace My_OPR.Migrations
 
                     b.Navigation("Group");
 
-                    b.Navigation("JenisDokumen");
+                    b.Navigation("KategoriDocument");
 
                     b.Navigation("Service");
 
@@ -1023,6 +1052,17 @@ namespace My_OPR.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("My_OPR.Models.Master.AnomaliLaporan", b =>
+                {
+                    b.HasOne("My_OPR.Models.Master.Service", "Layanan")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Layanan");
+                });
+
             modelBuilder.Entity("My_OPR.Models.Master.Employee", b =>
                 {
                     b.HasOne("My_OPR.Models.Master.Group", null)
@@ -1044,15 +1084,6 @@ namespace My_OPR.Migrations
                     b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("My_OPR.Models.Master.ListApp", b =>
-                {
-                    b.HasOne("My_OPR.Models.Master.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId");
-
-                    b.Navigation("Group");
-                });
-
             modelBuilder.Entity("My_OPR.Models.Master.Service", b =>
                 {
                     b.HasOne("My_OPR.Models.Master.Group", "Group")
@@ -1060,6 +1091,10 @@ namespace My_OPR.Migrations
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("My_OPR.Models.Master.SubLayanan", null)
+                        .WithMany("Services")
+                        .HasForeignKey("SubLayananId");
 
                     b.Navigation("Group");
                 });
@@ -1073,6 +1108,23 @@ namespace My_OPR.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.Transaction.LaporanHarian", b =>
+                {
+                    b.HasOne("My_OPR.Models.Master.AnomaliLaporan", "Anomali")
+                        .WithMany()
+                        .HasForeignKey("AnomaliId");
+
+                    b.HasOne("My_OPR.Models.Master.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anomali");
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("My_OPR.Models.Transaction.Presence", b =>
@@ -1123,35 +1175,23 @@ namespace My_OPR.Migrations
                     b.Navigation("ZoomStatus");
                 });
 
-            modelBuilder.Entity("ServiceSubLayanan", b =>
-                {
-                    b.HasOne("My_OPR.Models.Master.Service", null)
-                        .WithMany()
-                        .HasForeignKey("ServicesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("My_OPR.Models.Master.SubLayanan", null)
-                        .WithMany()
-                        .HasForeignKey("UnitsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("My_OPR.Models.DocumentISO.DetailRegister", b =>
                 {
                     b.Navigation("FileRegisteredIso");
                 });
 
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
                 {
-                    b.Navigation("RegisteredForms");
+                    b.Navigation("Support");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOSupport", b =>
+                {
+                    b.Navigation("HistoryISOs");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.KategoriDocument", b =>
                 {
-                    b.Navigation("JenisDocument");
-
                     b.Navigation("RegisteredForms");
                 });
 
@@ -1204,6 +1244,11 @@ namespace My_OPR.Migrations
                     b.Navigation("Employees");
 
                     b.Navigation("RegisteredForms");
+                });
+
+            modelBuilder.Entity("My_OPR.Models.Master.SubLayanan", b =>
+                {
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("My_OPR.Models.ZoomScheduler.ZoomModel", b =>

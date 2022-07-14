@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using My_OPR.Data;
 
@@ -11,9 +12,10 @@ using My_OPR.Data;
 namespace My_OPR.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220714041403_DokumenUtama")]
+    partial class DokumenUtama
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,77 +100,6 @@ namespace My_OPR.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("FileRegisteredIsos");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.HistoryISO", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime?>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ISOCoreId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Revision")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ISOCoreId");
-
-                    b.ToTable("HistoryISOs");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FilePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("JenisDocumentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("JenisDokumenId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JenisDocumentId");
-
-                    b.HasIndex("UnitId");
-
-                    b.ToTable("ISOCores");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>
@@ -931,30 +862,6 @@ namespace My_OPR.Migrations
                     b.Navigation("DetailRegister");
 
                     b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.HistoryISO", b =>
-                {
-                    b.HasOne("My_OPR.Models.DocumentISO.ISOCore", "ISOCore")
-                        .WithMany()
-                        .HasForeignKey("ISOCoreId");
-
-                    b.Navigation("ISOCore");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.DocumentISO.ISOCore", b =>
-                {
-                    b.HasOne("My_OPR.Models.DocumentISO.JenisDocument", "JenisDocument")
-                        .WithMany()
-                        .HasForeignKey("JenisDocumentId");
-
-                    b.HasOne("My_OPR.Models.Master.SubLayanan", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId");
-
-                    b.Navigation("JenisDocument");
-
-                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("My_OPR.Models.DocumentISO.JenisDocument", b =>

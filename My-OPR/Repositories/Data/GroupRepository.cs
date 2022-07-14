@@ -47,5 +47,12 @@ namespace My_OPR.Repositories.Data
                 return 0;
             }
         }
+        public Group GetByNpp(string npp)
+        {
+            var user = _context.Employees.Include(x => x.Service).Where(x => x.NPP == npp).FirstOrDefault();
+            var result = _context.Groups.Where(x => x.Id == user.Service.GroupId).FirstOrDefault();
+
+            return result;
+        }
     }
 }

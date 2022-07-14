@@ -38,6 +38,14 @@ namespace My_OPR.Controllers.Master
         {
             return Ok(_repository.GetAll());
         }
+        [HttpGet]
+        [Route("Group")]
+        public IActionResult GetByGroup(int? GroupId)
+        {
+
+
+            return Ok(_repository.GetByGroup(GroupId));
+        }
 
 
     }

@@ -22,7 +22,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 join RF in _context.RegisteredForms on DR.RegisteredFormId equals RF.Id
                 join SVC in _context.Services on Docis.ServiceId equals SVC.Id
                 join GRP in _context.Groups on SVC.GroupId equals GRP.Id
-                join KD in _context.KategoriDocuments on RF.KategoriDocumentId equals KD.Id
+                join KD in _context.JenisDocuments on RF.JenisDokumenId equals KD.Id
                 where GRP.Id == service!.GroupId && Docis.IsDelete == false
                 select new
                 {
