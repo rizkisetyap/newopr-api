@@ -75,8 +75,26 @@ namespace My_OPR.Repositories.Data
         public IQueryable GetByGroup(int? GroupId)
         {
             var result = _context.Services.Where(x => x.GroupId == GroupId);
+            var file = _context.FileRegisteredIsos
+            .Include(x => x.DetailRegister)
+            .Include(x => x.DetailRegister.RegisteredForm)
+            .Include(x => x.DetailRegister.RegisteredForm.Group)
+            .Select(x => new
+            {
+                Name = x.DetailRegister.RegisteredForm.Group.GroupName,
+            });
 
             return result;
+        }
+        public IQueryable GetServices()
+        {
+            var getall = _context.Services.Where(x => x.IsDelete == false).Select(x => new
+            {
+                Name = x.Name,
+                Id = x.Id
+            });
+
+            return getall;
         }
     }
 }

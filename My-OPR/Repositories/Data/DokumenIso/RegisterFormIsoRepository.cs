@@ -46,13 +46,13 @@ namespace My_OPR.Repositories.Data.DokumenIso
             }
         }
 
-        public int cekAntrian(int? subLayananId, int KategoriDokumenId)
+        public int cekAntrian(int? subLayananId, int KategoriDokumenId, int bulan, int tahun)
         {
             int NoAntrian = 0;
             var datas = _context.RegisteredForms
             .Include(x => x.JenisDokumen)
             .Include(x => x.JenisDokumen!.KategoriDokumen)
-            .Where(x => x.IsDelete == false && x.SubLayananId == subLayananId && x.JenisDokumen!.KategoriDokumen!.Id == KategoriDokumenId).ToList();
+            .Where(x => x.IsDelete == false && x.SubLayananId == subLayananId && x.JenisDokumen!.KategoriDokumen!.Id == KategoriDokumenId && x.Month == bulan && x.Year == tahun).ToList();
 
             if ((datas.Count == 0))
             {
@@ -63,17 +63,19 @@ namespace My_OPR.Repositories.Data.DokumenIso
             //NoAntrian = _context.Absensi.AsEnumerable().Last().NoAntrian + 1;
             return NoAntrian;
         }
-        public async Task<int> RegisterFormIso(RegisterFormVM model)
+        public async Task<int> RegisterFormIso(RegisteredForm model)
         {
             try
             {
                 RegisteredForm Rg = new RegisteredForm();
-                Rg.Name = model.RegisteredForm.Name;
-                Rg.SubLayananId = model.RegisteredForm.SubLayananId;
-                Rg.ServiceId = model.RegisteredForm.ServiceId;
-                Rg.JenisDokumenId = model.RegisteredForm.JenisDokumenId;
-                Rg.NoUrut = model.RegisteredForm.NoUrut;
-                Rg.GroupId = model.RegisteredForm.GroupId;
+                Rg.Name = model.Name;
+                Rg.SubLayananId = model.SubLayananId;
+                Rg.ServiceId = model.ServiceId;
+                Rg.JenisDokumenId = model.JenisDokumenId;
+                Rg.NoUrut = model.NoUrut;
+                Rg.GroupId = model.GroupId;
+                Rg.Year = model.Year;
+                Rg.Month = model.Month;
 
                 _context.Add<RegisteredForm>(Rg);
                 _context.SaveChanges();
@@ -98,31 +100,30 @@ namespace My_OPR.Repositories.Data.DokumenIso
 
 
                 // var oldRg = _context.RegisteredForms.SingleOrDefault(x => x.Id == regId)!;
-                var generatedNoForms = "FRM.OPR";
+                var noForm = this.GeneratedNoForms(detailRegsiter.Id);
+                #region komen
+                // var generatedNoForms = "FRM.OPR";
                 // generatedNoForms =
                 // Rg.GroupId == null ?
                 // generatedNoForms + "/" + Rg.NoUrut + "/" + (model.Month < 10 ? "0" + model.Month.ToString() : model.Month.ToString()) + "/" + (model.Year.ToString().Substring(2)) + "/REV." + (detailRegsiter.Revisi < 10 ? "0" + detailRegsiter.Revisi.ToString() : detailRegsiter.Revisi.ToString()) :
                 // generatedNoForms + "." + oldReg.Group.GroupName + ((oldReg.ServiceId != null && oldReg.Service.ShortName.Trim() == "PGO") ? "." + oldReg.Service.ShortName : "") + (oldReg.SubLayananId != null ? "." + oldReg.Unit.Name : "") + "." + (oldReg.NoUrut < 10 ? "0" + oldReg.NoUrut.ToString() : oldReg.NoUrut) + "/" + (model.Month < 10 ? "0" + model.Month.ToString() : model.Month.ToString()) + "/" + (model.Year.ToString().Substring(2)) + "/REV." + (detailRegsiter.Revisi < 10 ? "0" + detailRegsiter.Revisi.ToString() : detailRegsiter.Revisi.ToString());
-                if (Rg.JenisDokumen.KategoriDokumenId == 1)
-                {
-                    generatedNoForms = generatedNoForms + "/" + (Rg.NoUrut < 10 ? "0" + Rg.NoUrut : Rg.NoUrut) + "/" + (model.Month < 10 ? "0" + model.Month : model.Month) + "/" + model.Year.ToString().Substring(2) + "/REV." + (detailRegsiter.Revisi < 10 ? "0" + detailRegsiter.Revisi : detailRegsiter.Revisi);
-                }
-                else
-                {
-                    generatedNoForms = generatedNoForms + "." + Rg.Group.GroupName + "." + (Rg.Service.ShortName == Rg.Group.GroupName ? "" : Rg.Service.ShortName + ".") +
-                    (Rg.Unit.ShortName == Rg.Service.ShortName ? "" : Rg.Unit.ShortName + ".")
-                    + (Rg.NoUrut < 10 ? "0" + Rg.NoUrut : Rg.NoUrut) + "/" + (
-                         (model.Month < 10 ? "0" + model.Month : model.Month)// bulan
-                         + "/" +
-                         (model.Year.ToString().Substring(2))
-                    ) + "/REV." + formatAngka(detailRegsiter.Revisi);
-                }
+                // if (Rg.JenisDokumen.KategoriDokumenId == 1)
+                // {
+                //     generatedNoForms = generatedNoForms + "/" + (Rg.NoUrut < 10 ? "0" + Rg.NoUrut : Rg.NoUrut) + "/" + (model.Month < 10 ? "0" + model.Month : model.Month) + "/" + model.Year.ToString().Substring(2) + "/REV." + (detailRegsiter.Revisi < 10 ? "0" + detailRegsiter.Revisi : detailRegsiter.Revisi);
+                // }
+                // else
+                // {
+                //     generatedNoForms = generatedNoForms + "." + Rg.Group.GroupName + "." + (Rg.Service.ShortName == Rg.Group.GroupName ? "" : Rg.Service.ShortName + ".") +
+                //     (Rg.Unit.ShortName == Rg.Service.ShortName ? "" : Rg.Unit.ShortName + ".")
+                //     + (Rg.NoUrut < 10 ? "0" + Rg.NoUrut : Rg.NoUrut) + "/" + (
+                //          (model.Month < 10 ? "0" + model.Month : model.Month)// bulan
+                //          + "/" +
+                //          (model.Year.ToString().Substring(2))
+                //     ) + "/REV." + formatAngka(detailRegsiter.Revisi);
+                // }
+                #endregion
 
-
-
-
-
-                oldReg.FormNumber = generatedNoForms;
+                oldReg.FormNumber = noForm;
                 oldReg.UpdateDate = DateTime.Now;
                 _context.Entry(oldReg).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
@@ -158,17 +159,8 @@ namespace My_OPR.Repositories.Data.DokumenIso
 
             return "/" + bulan + "/" + tahun;
         }
-        public async Task<IEnumerable<NoForm>> GenerateListForms()
+        public IEnumerable<NoForm> GenerateListForms()
         {
-            // var rg = _context.DetailRegisters.Include(x => x.RegisteredForm).Include(x => x.RegisteredForm.Service.Group).Include(x => x.RegisteredForm.Unit).ToList().Select(x => new NoForm
-            // {
-            //     RegId = x.Id,
-            //     No = "FRM.OPR." + x.RegisteredForm?.Service?.Group?.GroupName + "." + x.RegisteredForm?.Service?.ShortName + (x.RegisteredForm?.SubLayananId != null ? "." + x.RegisteredForm.Unit.Name : "") + "." + x.RegisteredForm?.NoUrut + "/" + (
-            //         x.CreateDate.Month < 10 ? "0" + x.CreateDate.Month.ToString() : x.CreateDate.Month.ToString()
-            //     ) + "/" + x.CreateDate.Year.ToString().Substring(2) + "/REV." + (x.Revisi < 10 ? "0" + x.Revisi : x.Revisi),
-            //     NamaForm = x.RegisteredForm.Name!
-
-            // });
 
             var a = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Where(x => x.DetailRegisterId != null).Select(x => x.DetailRegisterId).ToList();
 
@@ -217,6 +209,47 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 NoForm = x.RegisteredForm.FormNumber,
                 FormName = x.RegisteredForm.Name
             });
+        }
+        public string GeneratedNoForms(int DetailRegsiterId)
+        {
+            var DetailReg = (from DR in _context.DetailRegisters
+                             join RF in _context.RegisteredForms on DR.RegisteredFormId equals RF.Id
+
+                             join G in _context.Groups on RF.GroupId equals G.Id
+                             join S in _context.Services on RF.ServiceId equals S.Id
+                             join U in _context.Units on RF.SubLayananId equals U.Id
+                             join JD in _context.JenisDocuments on RF.JenisDokumenId equals JD.Id
+                             where DR.Id == DetailRegsiterId && DR.isActive == true
+                             select new
+                             {
+                                 Kelompok = G.GroupName,
+                                 Layanan = S.ShortName,
+                                 Unit = U.ShortName,
+                                 KategoriDokumenId = JD.KategoriDokumenId,
+                                 Bulan = RF.Month < 10 ? "0" + RF.Month : RF.Month.ToString(),
+                                 Tahun = RF.Year.ToString().Substring(2),
+                                 Revisi = DR.Revisi < 10 ? "0" + DR.Revisi : DR.Revisi.ToString(),
+                                 NoUrut = RF.NoUrut < 10 ? "0" + RF.NoUrut : RF.NoUrut.ToString()
+                             }
+
+            ).FirstOrDefault();
+
+            var noForm = "FRM.OPR";
+            if (DetailReg!.KategoriDokumenId == 1)
+            {
+                noForm = noForm + "/" + DetailReg.NoUrut + "/" + DetailReg.Bulan + "/" + DetailReg.Tahun + "/REV." + DetailReg.Revisi;
+            }
+            else
+            {
+                noForm = noForm + "." + DetailReg.Kelompok + "." + (DetailReg.Layanan == DetailReg.Kelompok ? "" : DetailReg.Layanan + ".") +
+                    (DetailReg.Unit == DetailReg.Layanan ? "" : DetailReg.Unit + ".")
+                    + DetailReg.NoUrut + "/" + DetailReg.Bulan
+                         + "/" +
+                         DetailReg.Tahun
+                     + "/REV." + DetailReg.Revisi;
+            }
+
+            return noForm;
         }
     }
 

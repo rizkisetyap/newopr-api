@@ -54,6 +54,7 @@ services.AddScoped<RegisterFormIsoRepository>();
 services.AddScoped<JenisDokumenRepository>();
 services.AddScoped<DocumentISORepository>();
 services.AddScoped<DokumenUtamaRepository>();
+services.AddScoped<AdminIsoRepository>();
 #endregion
 
 builder.Services.AddAuthentication(options =>
