@@ -37,10 +37,11 @@ namespace My_OPR.Repositories.Data
         #region Login Data VM
         public LoginDataVM TokenPayload(string npp)
         {
-            var query = _connection.Query<AccountRoleVM>("EXEC SP_RolesList @Npp", new
-            {
-                Npp = npp
-            }).ToList();
+            // var query = _connection.Query<AccountRoleVM>("EXEC SP_RolesList @Npp", new
+            // {
+            //     Npp = npp
+            // }).ToList();
+            var query = _context.AccountRoles.Include(x=> x.Role).Where(x=>x.NPP == npp).Select(x=>x.Role).ToList();
 
             List<string> roles = new List<string>();
 
