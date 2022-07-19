@@ -62,5 +62,32 @@ namespace My_OPR.Controllers.Master
             return Ok(_repository.FilesISR());
         }
         #endregion
+        #region 
+        [HttpGet]
+        [Route("totalfile")]
+        public IActionResult GetTotalFile()
+        {
+            var result = _repository.TotalFile();
+            return Ok(result);
+        }
+        #endregion
+        #region 
+        [HttpGet]
+        [Route("totallayanan")]
+        public IActionResult GetTotalLayanan(int GroupId)
+        {
+            var result = _repository.TotalLayanan(GroupId);
+            return Ok(result);
+        }
+        #endregion
+        #region 
+        [HttpGet]
+        [Route("totalunit")]
+        public IActionResult GetTotalUnit(int ServiceId)
+        {
+            var result = _repository.TotalUnit(ServiceId);
+            return Ok(result);
+        }
+        #endregion
     }
 }
