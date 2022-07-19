@@ -14,7 +14,7 @@ namespace My_OPR.Repositories.Data
 
         public List<ListApp> GetAll()
         {
-            return _context.ListApps.Where(x => x.IsDelete == false).OrderByDescending(x => x.CreateDate).ToList();
+            return _context.ListApps.Include(x=>x.Group).Where(x => x.IsDelete == false).OrderByDescending(x => x.CreateDate).ToList();
         }
 
         public int SoftDelete(int id)
@@ -27,6 +27,11 @@ namespace My_OPR.Repositories.Data
             }
             var result = _context.SaveChanges();
             return result;
+        }
+
+        public IQueryable FilterByGroupId(int groupId)
+        {
+            return _context.ListApps.Include(x => x.Group).Where(x => x.GroupId == groupId || x.GroupId == null);
         }
     }
 }

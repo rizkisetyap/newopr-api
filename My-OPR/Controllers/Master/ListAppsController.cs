@@ -28,5 +28,11 @@ namespace My_OPR.Controllers.Master
             int result = _listappRepository.SoftDelete(id);
             return Ok(result);
         }
+        [HttpGet]
+        [Route("GetByGroupId")]
+        public IActionResult GetByGroupId(int groupId)
+        {
+            return Ok(_listappRepository.FilterByGroupId(groupId));
+        }
     }
 }

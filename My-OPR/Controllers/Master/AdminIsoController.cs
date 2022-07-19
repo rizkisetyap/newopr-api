@@ -89,5 +89,14 @@ namespace My_OPR.Controllers.Master
             return Ok(result);
         }
         #endregion
+        #region
+        [HttpGet]
+        [Route("listformkelompok")]
+        public IActionResult GetListForm()
+        {
+            var result = _repository.ListForm();
+            return Ok(result);
+        }
+        #endregion
     }
 }

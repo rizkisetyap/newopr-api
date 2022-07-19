@@ -160,5 +160,38 @@ namespace My_OPR.Repositories.Data.DokumenIso
             return result;
         }
         #endregion
+        #region
+        public List<TotalFormVm> ListForm()
+        {
+            List<TotalFormVm> result = new List<TotalFormVm>();
+            var groups = _context.Groups.Where(x=>x.IsDelete == false).Select(x=> new{
+                Id = x.Id,
+                Name = x.GroupName
+            }).ToList();
+            foreach(var group in groups)
+            {
+                TotalFormVm vm = new TotalFormVm();
+                vm.namaGroup = group.Name;
+                vm.idGroup = group.Id;
+                var listForms = _context.DetailRegisters
+                .Include(x=>x.RegisteredForm)
+                .Include(x=>x.RegisteredForm.Group)
+                .Include(x=>x.RegisteredForm.Service)
+                .Include(x=>x.RegisteredForm.Unit)
+                .Where(x=>(x.isActive == true && x.IsDelete == false) && x.RegisteredForm.IsDelete == false && x.RegisteredForm.GroupId == group.Id)
+                .Select(x=> new RegVM {
+                    Id = x.Id,
+                    idForm = x.RegisteredFormId,
+                    namaForm = x.RegisteredForm.Name,
+                    formNumber = x.RegisteredForm.FormNumber
+                })
+                .ToList();
+                vm.listForms = listForms;
+
+                result.Add(vm);
+            }
+            return result; 
+        }
+        #endregion
     }
 }
