@@ -1,8 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using My_OPR.Models.DocumentISO;
 using My_OPR.Repositories.Data.DokumenIso;
-using My_OPR.Repositories.Data;
-using Microsoft.AspNetCore.Mvc;
-using My_OPR.ViewModels;
 
 namespace My_OPR.Controllers.Transaction
 {
@@ -68,6 +66,18 @@ namespace My_OPR.Controllers.Transaction
         {
             return Ok(_repository.GetFormByServiceAndKategori(ServiceId, KategoriDocumentId, unitId));
         }
+        //#region get byId
+        //[HttpGet]
+        //public IActionResult Get(int id)
+        //{
+        //    var result = _repository.GetById(id);
+        //    if (result == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(result);
+        //}
+        //#endregion
 
 
     }

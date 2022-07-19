@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using My_OPR.ViewModels;
 using My_OPR.Data;
 using My_OPR.Models.DocumentISO;
+using My_OPR.ViewModels;
 namespace My_OPR.Repositories.Data.DokumenIso
 {
     public class RegisterFormIsoRepository : GenericRepository<ApplicationDBContext, RegisteredForm, int>
@@ -250,6 +250,16 @@ namespace My_OPR.Repositories.Data.DokumenIso
             }
 
             return noForm;
+        }
+        public RegisteredForm GetById(int id)
+        {
+            var result = _context.RegisteredForms
+                .Include(x => x.Group)
+                .Include(x => x.Service)
+                .Include(x => x.Unit)
+                .Where(x => x.IsDelete == false)
+                .FirstOrDefault();
+            return result;
         }
     }
 
