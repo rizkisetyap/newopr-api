@@ -1,11 +1,11 @@
 // #nullable disable
-using My_OPR.Repositories.Data.DokumenIso;
 using Microsoft.AspNetCore.Mvc;
-using My_OPR.Data;
-using My_OPR.ViewModels;
-using My_OPR.Models.DocumentISO;
-using My_OPR.Lib;
 using Microsoft.EntityFrameworkCore;
+using My_OPR.Data;
+using My_OPR.Lib;
+using My_OPR.Models.DocumentISO;
+using My_OPR.Repositories.Data.DokumenIso;
+using My_OPR.ViewModels;
 namespace My_OPR.Controllers.Transaction
 {
     [ApiController]
@@ -242,33 +242,10 @@ namespace My_OPR.Controllers.Transaction
         #region GetIso
         [HttpGet]
         [Route("DokumenPendukung")]
-        public IActionResult GetIsoSupport(string npp)
+        public IActionResult GetIsoSupport(int GroupId)
         {
-            var query = (
-                from U in _context.Employees
-                join S in _context.Services on U.ServiceId equals S.Id
-                join G in _context.Groups on S.GroupId equals G.Id
-                select S
 
-            ).FirstOrDefault();
-            var isoSupport = (
-                from D in _context.FileRegisteredIsos
-                join DR in _context.DetailRegisters on D.DetailRegisterId equals DR.Id
-                join RF in _context.RegisteredForms on DR.RegisteredFormId equals RF.Id
-                where RF.ServiceId == query.Id && DR.isActive == true
-                select new
-                {
-                    Id = D.Id,
-                    FilePath = D.FilePath,
-                    FileName = D.FileName,
-                    FormNumber = RF.FormNumber,
-                    Revisi = DR.Revisi,
-                    LastUpdate = D.UpdateDate
-                }
-
-                ).ToArray();
-
-            return Ok(isoSupport);
+            return Ok(_repository.GetByKelompok(GroupId));
         }
         #endregion
         #region SoftDelete

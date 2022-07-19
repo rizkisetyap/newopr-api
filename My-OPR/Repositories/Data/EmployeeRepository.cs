@@ -2,7 +2,6 @@
 using My_OPR.Data;
 using My_OPR.Models.Master;
 using My_OPR.ViewModels;
-using Microsoft.AspNetCore.Identity;
 
 namespace My_OPR.Repositories.Data
 {
@@ -73,9 +72,22 @@ namespace My_OPR.Repositories.Data
                 .Where(x => x.IsDelete == false).ToList();
         }
 
-        public Employee Get(string npp)
+        public Employee Get(string? npp)
+
         {
-            var exist = _context.Employees.Include(e => e.Account).Include(x => x.Account.Roles).Include(x => x.Account.Roles).Where(x => x.NPP == npp).Include(x => x.Position).Include(s => s.Service).Include(s => s.Service.Group).FirstOrDefault();
+            if (npp == null)
+            {
+                return null;
+            }
+            var exist = _context.Employees
+                .Include(e => e.Account)
+                .Include(x => x.Account.Roles)
+                .Include(x => x.Position)
+                .Include(s => s.Service)
+                .Include(s => s.Service.Group)
+                .Include(x => x.Service.Units)
+                .Where(x => x.NPP == npp)
+                .FirstOrDefault();
             if (exist != null)
             {
                 return exist;

@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using My_OPR.Data;
 using My_OPR.Models.Master;
 using My_OPR.Repositories.Data;
 using My_OPR.ViewModels;
@@ -8,8 +9,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
-using My_OPR.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace My_OPR.Controllers.Master
 {
@@ -86,6 +85,7 @@ namespace My_OPR.Controllers.Master
                 userinfo.Service = s.Name;
                 userinfo.Kelompok = s.Group.GroupName;
                 userinfo.Jabatan = employee.Position.PositionName;
+                userinfo.Employee = employee;
 
                 return Ok(new JWTokenVM
                 {
