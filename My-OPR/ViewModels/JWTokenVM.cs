@@ -1,5 +1,5 @@
-﻿using System.Net;
-using My_OPR.Models.Master;
+﻿using My_OPR.Models.Master;
+using System.Net;
 namespace My_OPR.ViewModels
 {
     public class JWTokenVM
@@ -19,5 +19,6 @@ namespace My_OPR.ViewModels
         public ICollection<String>? AccountRole { get; set; }
         public string? Kelompok { get; set; }
         public string? Jabatan { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

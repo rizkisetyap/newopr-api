@@ -29,16 +29,18 @@ namespace My_OPR.Controllers.Transaction
             int result = _repository.SoftDelete(id);
             return Ok(result);
         }
-
+        #region cek no urut
         [HttpGet]
         [Route("CekAntrian")]
-        public IActionResult CheckAntrian(int? idSublayanan, int KategoriDokumenId)
+        public IActionResult CheckAntrian(int? idSublayanan, int KategoriDokumenId, int Tahun, int bulan)
         {
-            return Ok(_repository.cekAntrian(idSublayanan, KategoriDokumenId));
+            return Ok(_repository.cekAntrian(idSublayanan, KategoriDokumenId, bulan, Tahun));
         }
+        #endregion
+        #region RegisterForms
         [HttpPost]
         [Route("registerForm")]
-        public async Task<IActionResult> Create(RegisterFormVM model)
+        public async Task<IActionResult> Create(RegisteredForm model)
         {
             var status = await _repository.RegisterFormIso(model);
             switch (status)
@@ -53,14 +55,7 @@ namespace My_OPR.Controllers.Transaction
                     return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
-        [HttpGet]
-        [Route("ListForms")]
-        public async Task<IActionResult> GetList()
-        {
-            // var ListForms = null;
-            return Ok(await _repository.GenerateListForms());
-        }
+        #endregion
         [HttpGet]
         [Route("Filter")]
         public IActionResult Filter(int? GroupId)

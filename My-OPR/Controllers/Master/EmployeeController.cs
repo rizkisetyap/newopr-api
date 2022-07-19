@@ -26,7 +26,7 @@ namespace My_OPR.Controllers.Master
 
         [HttpGet]
         [Route("By")]
-        public IActionResult Get(string Id)
+        public IActionResult Get(string? Id)
         {
             return Ok(_employeeRepository.Get(Id));
         }

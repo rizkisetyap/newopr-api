@@ -18,6 +18,8 @@ namespace My_OPR.Models.DocumentISO
         public int? SubLayananId { get; set; }
         [JsonIgnore]
         public virtual SubLayanan? Unit { get; set; }
+        public int Month { get; set; } = DateTime.Now.Month;
+        public int Year { get; set; } = DateTime.Now.Year;
 
         // public int? KategoriDocumentId { get; set; }
         // public virtual KategoriDocument? KategoriDocument { get; set; }
@@ -27,9 +29,10 @@ namespace My_OPR.Models.DocumentISO
         public int NoUrut { get; set; }
         public string? FormNumber { get; set; }
         [DataType(DataType.DateTime)]
-        public DateTime UpdateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
         [DataType(DataType.DateTime)]
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime? CreateDate { get; set; } = DateTime.Now;
+        public DateTime? DeleteDate { get; set; }
         public virtual ICollection<DetailRegister>? DetailRegisters { get; set; }
     }
 }
