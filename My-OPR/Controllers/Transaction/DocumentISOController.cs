@@ -239,7 +239,7 @@ namespace My_OPR.Controllers.Transaction
             return Ok(result);
         }
         #endregion
-        #region GetIso
+        #region GetIsoSupport
         [HttpGet]
         [Route("DokumenPendukung")]
         public IActionResult GetIsoSupport(int GroupId)
@@ -277,5 +277,15 @@ namespace My_OPR.Controllers.Transaction
             }
         }
         #endregion
+        #region Dokumen utama
+        [HttpGet]
+        [Route("DokumenUtama")]
+        public IActionResult DokumenUtama(int GroupId)
+        {
+            return Ok();
+        }
+        #endregion
+
+
     }
 }
