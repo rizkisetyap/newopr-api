@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using My_OPR.ViewModels;
 using My_OPR.Data;
 using My_OPR.Models.DocumentISO;
+using My_OPR.ViewModels;
 namespace My_OPR.Repositories.Data.DokumenIso
 {
+
     public class RegisterFormIsoRepository : GenericRepository<ApplicationDBContext, RegisteredForm, int>
     {
         private readonly ApplicationDBContext _context;
@@ -12,10 +13,35 @@ namespace My_OPR.Repositories.Data.DokumenIso
             _context = context;
         }
 
-        public List<RegisteredForm> GetAll()
+        public IQueryable GetAll()
         {
-            var result = _context.RegisteredForms.Include(x => x.Unit).Include(x => x.Service).Include(x => x.JenisDokumen)
-                .Where(x => x.IsDelete == false).ToList();
+            var result = _context.DetailRegisters
+                .Include(x => x.RegisteredForm)
+                .Include(x => x.RegisteredForm.Group)
+                .Include(x => x.RegisteredForm.Service)
+                .Include(x => x.RegisteredForm.Unit)
+                .Include(x => x.RegisteredForm.JenisDokumen)
+                .Include(x => x.RegisteredForm.JenisDokumen.KategoriDokumen)
+                .Where(x => x.isActive == true && x.IsDelete == false).Select(x => new
+                {
+                    Id = x.Id,
+                    formNumber = x.RegisteredForm.FormNumber,
+                    formName = x.RegisteredForm.Name,
+                    kelompok = x.RegisteredForm.Group.GroupName,
+                    layanan = new
+                    {
+                        shortName = x.RegisteredForm.Service.ShortName,
+                        name = x.RegisteredForm.Service.Name
+                    },
+                    unit = new
+                    {
+                        name = x.RegisteredForm.Unit.Name,
+                        shortName = x.RegisteredForm.Unit.ShortName
+                    },
+                    fileIso = _context.FileRegisteredIsos.Any(f => f.DetailRegisterId == x.Id),
+                    lastUpdate = x.RegisteredForm.UpdateDate != null ? x.RegisteredForm.UpdateDate : x.RegisteredForm.CreateDate,
+                    createDate = x.RegisteredForm.CreateDate
+                });
 
             return result;
         }
@@ -46,8 +72,12 @@ namespace My_OPR.Repositories.Data.DokumenIso
             }
         }
 
-        public int cekAntrian(int? subLayananId, int KategoriDokumenId, int bulan, int tahun)
+        public int? cekAntrian(int? subLayananId, int KategoriDokumenId, int bulan, int tahun)
         {
+            if (KategoriDokumenId != 3)
+            {
+                return null;
+            }
             int NoAntrian = 0;
             var datas = _context.RegisteredForms
             .Include(x => x.JenisDokumen)
@@ -63,10 +93,45 @@ namespace My_OPR.Repositories.Data.DokumenIso
             //NoAntrian = _context.Absensi.AsEnumerable().Last().NoAntrian + 1;
             return NoAntrian;
         }
+        public int? CekAntrianInti(int GroupId)
+        {
+            var antrian = 0;
+            var data = _context.RegisteredForms.Include(x => x.JenisDokumen).Where(x => x.IsDelete == false && x.GroupId == GroupId && x.JenisDokumen.KategoriDokumenId == 1).ToList();
+            if (data.Count == 0)
+            {
+                antrian = 1;
+            }
+            else
+            {
+                antrian = data.AsEnumerable().Last().NoUrut + 1;
+            }
+            return antrian;
+        }
         public async Task<int> RegisterFormIso(RegisteredForm model)
         {
+
             try
             {
+                var kategoriDocId = _context.JenisDocuments.Where(x => x.Id == model.JenisDokumenId).Select(x => x.KategoriDokumenId).FirstOrDefault();
+                if (kategoriDocId != 3)
+                {
+                    var formExist = _context.DetailRegisters
+                        .Include(x => x.RegisteredForm)
+                        .Include(x => x.RegisteredForm.Group)
+                        .Include(x => x.RegisteredForm.Service)
+                        .Include(x => x.RegisteredForm.Unit)
+                        .Any(
+                        x => x.isActive == true &&
+                        x.IsDelete == false &&
+                        x.RegisteredForm.IsDelete == false &&
+                        x.RegisteredForm.JenisDokumenId == model.JenisDokumenId &&
+                        x.RegisteredForm.GroupId == model.GroupId
+                        );
+                    if (formExist)
+                    {
+                        return 409;
+                    }
+                }
                 RegisteredForm Rg = new RegisteredForm();
                 Rg.Name = model.Name;
                 Rg.SubLayananId = model.SubLayananId;
@@ -98,8 +163,6 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 .Include(x => x.Unit)
                 .FirstOrDefault(x => x.Id == regId)!;
 
-
-                // var oldRg = _context.RegisteredForms.SingleOrDefault(x => x.Id == regId)!;
                 var noForm = this.GeneratedNoForms(detailRegsiter.Id);
                 #region komen
                 // var generatedNoForms = "FRM.OPR";
@@ -182,27 +245,48 @@ namespace My_OPR.Repositories.Data.DokumenIso
         public IQueryable ListFormByUserSignin(int? GroupId)
         {
 
-            var conditions = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Select(x => x.DetailRegisterId);
+            //var conditions = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Select(x => x.DetailRegisterId);
             var result = _context.DetailRegisters
             .Include(x => x.RegisteredForm)
-            .Where(x => (x.RegisteredForm.GroupId == GroupId && !conditions.Contains(x.Id)) || (x.RegisteredForm.ServiceId == null && x.RegisteredForm.SubLayananId == null && x.RegisteredForm.GroupId == null));
-
+            .Where(x => x.RegisteredForm.GroupId == GroupId && x.IsDelete == false && x.isActive == true).Select(x => new
+            {
+                Id = x.Id,
+                FormId = x.RegisteredFormId,
+                FormName = x.RegisteredForm.Name,
+                FormNumber = x.RegisteredForm.FormNumber,
+                FileIso = _context.FileRegisteredIsos.Any(f => f.DetailRegisterId == x.Id),
+                UpdateDate = x.CreateDate
+            });
 
             return result;
         }
         public IQueryable GetFormByServiceAndKategori(int ServiceId, int KategoriDokumenId, int? UnitId)
         {
+            var sId = _context.Units.Where(x => x.Id == UnitId).Select(x => x.ServiceId).FirstOrDefault();
+            var GroupId = _context.Services.Where(x => x.Id == sId).Select(x => x.GroupId).FirstOrDefault();
+            int? Kategori = _context.JenisDocuments.Where(x => x.Id == KategoriDokumenId).Select(x => x.KategoriDokumenId).FirstOrDefault();
+
+
+            var isFileExist = _context.FileRegisteredIsos.Include(x => x.DetailRegister)
+                .Include(x => x.DetailRegister.RegisteredForm).Select(x => x.DetailRegister.RegisteredFormId).ToList();
+
+
             var filter = _context.DetailRegisters
             .Include(x => x.RegisteredForm)
             .Include(x => x.RegisteredForm!.JenisDokumen)
-            .Where(x => x.isActive && x.RegisteredForm!.JenisDokumen!.KategoriDokumenId == KategoriDokumenId && x.RegisteredForm.ServiceId == ServiceId && x.RegisteredForm.SubLayananId == UnitId);
-            // if (UnitId != null)
-            // {
-            //     filter = _context.DetailRegisters
-            // .Include(x => x.RegisteredForm)
-            // .Include(x => x.RegisteredForm!.JenisDokumen)
-            // .Where(x => x.isActive && x.RegisteredForm!.JenisDokumen!.KategoriDokumenId == KategoriDokumenId && x.RegisteredForm.ServiceId == ServiceId && x.RegisteredForm.SubLayananId == UnitId);
-            // }
+            .Where(x => x.isActive == true && x.RegisteredForm.IsDelete == false && x.IsDelete == false && x.RegisteredForm!.JenisDokumen!.KategoriDokumenId == Kategori && !isFileExist.Contains(x.RegisteredFormId));
+
+            if (Kategori != null && Kategori == 3)
+            {
+                var result = filter.Where(x => x.RegisteredForm.ServiceId == ServiceId && x.RegisteredForm.SubLayananId == UnitId).Select(x => new
+                {
+                    Id = x.Id,
+                    NoForm = x.RegisteredForm.FormNumber,
+                    FormName = x.RegisteredForm.Name
+                });
+                return result;
+            }
+
             return filter.Select(x => new
             {
                 Id = x.Id,
@@ -212,27 +296,47 @@ namespace My_OPR.Repositories.Data.DokumenIso
         }
         public string GeneratedNoForms(int DetailRegsiterId)
         {
-            var DetailReg = (from DR in _context.DetailRegisters
-                             join RF in _context.RegisteredForms on DR.RegisteredFormId equals RF.Id
+            //var DetailReg = (from DR in _context.DetailRegisters
+            //                 join RF in _context.RegisteredForms on DR.RegisteredFormId equals RF.Id into RegisterForms
+            //                 from RegisterForm in RegisterForms.DefaultIfEmpty()
 
-                             join G in _context.Groups on RF.GroupId equals G.Id
-                             join S in _context.Services on RF.ServiceId equals S.Id
-                             join U in _context.Units on RF.SubLayananId equals U.Id
-                             join JD in _context.JenisDocuments on RF.JenisDokumenId equals JD.Id
-                             where DR.Id == DetailRegsiterId && DR.isActive == true
-                             select new
-                             {
-                                 Kelompok = G.GroupName,
-                                 Layanan = S.ShortName,
-                                 Unit = U.ShortName,
-                                 KategoriDokumenId = JD.KategoriDokumenId,
-                                 Bulan = RF.Month < 10 ? "0" + RF.Month : RF.Month.ToString(),
-                                 Tahun = RF.Year.ToString().Substring(2),
-                                 Revisi = DR.Revisi < 10 ? "0" + DR.Revisi : DR.Revisi.ToString(),
-                                 NoUrut = RF.NoUrut < 10 ? "0" + RF.NoUrut : RF.NoUrut.ToString()
-                             }
+            //                 join G in _context.Groups on RegisterForm.GroupId equals G.Id into Groups
+            //                 from Group in Groups.DefaultIfEmpty()
+            //                 join S in _context.Services on RegisterForm.ServiceId equals S.Id
+            //                 join U in _context.Units on RegisterForm.SubLayananId equals U.Id
+            //                 join JD in _context.JenisDocuments on RegisterForm.JenisDokumenId equals JD.Id
+            //                 where DR.Id == DetailRegsiterId && DR.isActive == true
+            //                 select new
+            //                 {
+            //                     Kelompok = Group.GroupName,
+            //                     Layanan = S.ShortName,
+            //                     Unit = U.ShortName,
+            //                     KategoriDokumenId = JD.KategoriDokumenId,
+            //                     Bulan = RegisterForm.Month < 10 ? "0" + RegisterForm.Month : RegisterForm.Month.ToString(),
+            //                     Tahun = RegisterForm.Year.ToString().Substring(2),
+            //                     Revisi = DR.Revisi < 10 ? "0" + DR.Revisi : DR.Revisi.ToString(),
+            //                     NoUrut = RegisterForm.NoUrut < 10 ? "0" + RegisterForm.NoUrut : RegisterForm.NoUrut.ToString()
+            //                 }
 
-            ).FirstOrDefault();
+            //).FirstOrDefault();
+            var DetailReg = _context.DetailRegisters
+                .Include(x => x.RegisteredForm)
+                .Include(x => x.RegisteredForm.Group)
+                .Include(x => x.RegisteredForm.Service)
+                .Include(x => x.RegisteredForm.Unit)
+                .Include(x => x.RegisteredForm.JenisDokumen)
+                .Where(x => x.Id == DetailRegsiterId && x.IsDelete == false && x.isActive == true && x.RegisteredForm.IsDelete == false)
+                .Select(x => new
+                {
+                    Kelompok = x.RegisteredForm.Group.GroupName,
+                    Layanan = x.RegisteredForm.Service.ShortName ?? null,
+                    Unit = x.RegisteredForm.Unit.ShortName ?? null,
+                    KategoriDokumenId = x.RegisteredForm.JenisDokumen.KategoriDokumenId,
+                    Bulan = x.RegisteredForm.Month < 10 ? "0" + x.RegisteredForm.Month : x.RegisteredForm.Month.ToString() ?? null,
+                    Tahun = x.RegisteredForm.Year.ToString().Substring(2) ?? null,
+                    Revisi = x.Revisi < 10 ? "0" + x.Revisi : x.Revisi.ToString() ?? null,
+                    NoUrut = x.RegisteredForm.NoUrut < 10 ? "0" + x.RegisteredForm.NoUrut : x.RegisteredForm.NoUrut.ToString()
+                }).FirstOrDefault();
 
             var noForm = "FRM.OPR";
             if (DetailReg!.KategoriDokumenId == 1)
@@ -251,6 +355,70 @@ namespace My_OPR.Repositories.Data.DokumenIso
 
             return noForm;
         }
+        public RegisteredForm GetById(int id)
+        {
+
+
+            var result = _context.RegisteredForms
+                .Include(x => x.Group)
+                .Include(x => x.Service)
+                .Include(x => x.Unit)
+                .Where(x => x.IsDelete == false)
+                .FirstOrDefault();
+            return result;
+        }
+
+        #region Get By Id
+        public DetailRegister GetDetailRegisterById(int id)
+        {
+            var result = _context.DetailRegisters
+                .Include(x => x.RegisteredForm)
+                .Include(x => x.RegisteredForm.Group)
+                .Include(x => x.RegisteredForm.Service)
+                .Include(x => x.RegisteredForm.Unit)
+                .Where(x => x.IsDelete == false && x.isActive == true && x.Id == id).FirstOrDefault();
+
+
+            return result;
+        }
+        #endregion
+        #region UpdateForm
+        public int? UpdateForms(UpdateFormVM model)
+        {
+            try
+            {
+                var DetailReg = _context.DetailRegisters.Include(x => x.RegisteredForm)
+                .Where(x => x.Id == model.Id && x.isActive == true && x.IsDelete == false).FirstOrDefault();
+                var forms = _context.RegisteredForms
+                    .Where(x => x.Id == DetailReg.RegisteredFormId && x.IsDelete == false).FirstOrDefault();
+
+                forms.NoUrut = model.NoUrut;
+                forms.Name = model.Name;
+                forms.Month = model.Month;
+                forms.Year = model.Year;
+                DetailReg.Revisi = model.Revisi;
+
+                _context.Entry(DetailReg).State = EntityState.Modified;
+                _context.Entry(forms).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                var newNoForm = this.GeneratedNoForms(model.Id);
+                var oldForm = _context.RegisteredForms.Where(x => x.Id == DetailReg.RegisteredFormId && x.IsDelete == false).FirstOrDefault();
+                if (oldForm != null)
+                {
+                    oldForm.FormNumber = newNoForm;
+                }
+                _context.Entry(oldForm).State = EntityState.Modified;
+                return _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
+
+        }
+        #endregion
     }
 
 }

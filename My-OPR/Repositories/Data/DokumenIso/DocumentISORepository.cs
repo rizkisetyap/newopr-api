@@ -11,6 +11,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
         {
             _context = context;
         }
+        #region Dokumen Pendukung
         public IQueryable GetByKelompok(int GroupId)
         {
             var result =
@@ -36,6 +37,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
 
             return result;
         }
+        #endregion
         public IQueryable GetByNpp(string? npp)
         {
             var employe = _context.Employees.Where(x => x.NPP == npp).FirstOrDefault();
