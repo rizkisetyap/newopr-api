@@ -1,6 +1,6 @@
-using My_OPR.Repositories.Data.DokumenIso;
 using Microsoft.AspNetCore.Mvc;
 using My_OPR.Models.DocumentISO;
+using My_OPR.Repositories.Data.DokumenIso;
 using My_OPR.ViewModels;
 namespace My_OPR.Controllers.Transaction
 {
@@ -13,7 +13,7 @@ namespace My_OPR.Controllers.Transaction
         {
             _repository = repository;
         }
-
+        #region Upload 
         [HttpPost]
         [Route("insert")]
         public IActionResult Upload(UploadDokumenUtamaVM model)
@@ -26,8 +26,44 @@ namespace My_OPR.Controllers.Transaction
             catch (System.Exception)
             {
 
-                return BadRequest();
+                return StatusCode(StatusCodes.Status409Conflict);
             }
         }
+        #endregion
+        #region GetByGroup
+        [HttpGet]
+        [Route("Group")]
+        public IActionResult GetByGroup(int GroupId)
+        {
+            try
+            {
+                var result = _repository.GetByGroup(GroupId);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+        }
+        #endregion
+        #region Update
+        [HttpPut]
+        [Route("Update")]
+        public IActionResult UpdateDokumen([FromBody] UpdateIsoCoreVM model, int Id)
+        {
+            try
+            {
+                var result = _repository.Update(model, Id);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.Message);
+            }
+        }
+        #endregion
     }
 }

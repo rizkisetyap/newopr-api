@@ -22,12 +22,19 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 .Include(x => x.RegisteredForm.Unit)
                 .Include(x => x.RegisteredForm.JenisDokumen)
                 .Include(x => x.RegisteredForm.JenisDokumen.KategoriDokumen)
+                .OrderBy(x => x.RegisteredForm.Group.GroupName)
+                .ThenBy(x => x.RegisteredForm.Unit.ShortName)
+                .ThenBy(x => x.RegisteredForm.NoUrut)
+                .ThenBy(x => x.RegisteredForm.JenisDokumen.KategoriDokumen.Name)
+                .ThenBy(x => x.RegisteredForm.Service.ShortName)
+                .ThenBy(x => x.RegisteredForm.Name)
                 .Where(x => x.isActive == true && x.IsDelete == false).Select(x => new
                 {
                     Id = x.Id,
                     formNumber = x.RegisteredForm.FormNumber,
                     formName = x.RegisteredForm.Name,
                     kelompok = x.RegisteredForm.Group.GroupName,
+                    KategoriDokumen = x.RegisteredForm.JenisDokumen.KategoriDokumen.Name,
                     layanan = new
                     {
                         shortName = x.RegisteredForm.Service.ShortName,
@@ -248,7 +255,9 @@ namespace My_OPR.Repositories.Data.DokumenIso
             //var conditions = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Select(x => x.DetailRegisterId);
             var result = _context.DetailRegisters
             .Include(x => x.RegisteredForm)
-            .Where(x => x.RegisteredForm.GroupId == GroupId && x.IsDelete == false && x.isActive == true).Select(x => new
+            .Where(x => x.RegisteredForm.GroupId == GroupId && x.IsDelete == false && x.isActive == true)
+            .OrderByDescending(x => x.UpdateDate).ThenByDescending(x => x.CreateDate)
+            .Select(x => new
             {
                 Id = x.Id,
                 FormId = x.RegisteredFormId,
@@ -262,9 +271,9 @@ namespace My_OPR.Repositories.Data.DokumenIso
         }
         public IQueryable GetFormByServiceAndKategori(int ServiceId, int KategoriDokumenId, int? UnitId)
         {
+            int? Kategori = _context.JenisDocuments.Where(x => x.Id == KategoriDokumenId).Select(x => x.KategoriDokumenId).FirstOrDefault();
             var sId = _context.Units.Where(x => x.Id == UnitId).Select(x => x.ServiceId).FirstOrDefault();
             var GroupId = _context.Services.Where(x => x.Id == sId).Select(x => x.GroupId).FirstOrDefault();
-            int? Kategori = _context.JenisDocuments.Where(x => x.Id == KategoriDokumenId).Select(x => x.KategoriDokumenId).FirstOrDefault();
 
 
             var isFileExist = _context.FileRegisteredIsos.Include(x => x.DetailRegister)
@@ -276,9 +285,9 @@ namespace My_OPR.Repositories.Data.DokumenIso
             .Include(x => x.RegisteredForm!.JenisDokumen)
             .Where(x => x.isActive == true && x.RegisteredForm.IsDelete == false && x.IsDelete == false && x.RegisteredForm!.JenisDokumen!.KategoriDokumenId == Kategori && !isFileExist.Contains(x.RegisteredFormId));
 
-            if (Kategori != null && Kategori == 3)
+            if (Kategori == 3)
             {
-                var result = filter.Where(x => x.RegisteredForm.ServiceId == ServiceId && x.RegisteredForm.SubLayananId == UnitId).Select(x => new
+                var result = filter.Where(x => x.RegisteredForm.ServiceId == sId && x.RegisteredForm.SubLayananId == UnitId).Select(x => new
                 {
                     Id = x.Id,
                     NoForm = x.RegisteredForm.FormNumber,
@@ -287,7 +296,12 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 return result;
             }
 
-            return filter.Select(x => new
+            var final = filter
+                .Where(x => x.RegisteredForm.JenisDokumenId == KategoriDokumenId && x.RegisteredForm.GroupId == GroupId)
+                .OrderByDescending(x => x.UpdateDate)
+                .ThenByDescending(x => x.CreateDate);
+
+            return final.Select(x => new
             {
                 Id = x.Id,
                 NoForm = x.RegisteredForm.FormNumber,

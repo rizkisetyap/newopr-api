@@ -1,6 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using My_OPR.Data;
 using My_OPR.Models.Master;
-using Microsoft.EntityFrameworkCore;
 namespace My_OPR.Repositories.Data
 {
     public class ServiceRepository : GenericRepository<ApplicationDBContext, Service, int>
@@ -15,7 +15,7 @@ namespace My_OPR.Repositories.Data
         }
         public override IEnumerable<Service> Get()
         {
-            return _context.Services.Include(x => x.Group).ToArray();
+            return _context.Services.Include(x => x.Group).OrderBy(x => x.ShortName).ThenBy(x => x.Name).ToArray();
         }
 
         public async Task<int> DeleteById(int id)
@@ -40,7 +40,7 @@ namespace My_OPR.Repositories.Data
 
         public List<Service> GetAll()
         {
-            return _context.Services.Include(x => x.Group).Where(x => x.IsDelete == false).ToList();
+            return _context.Services.Include(x => x.Group).Where(x => x.IsDelete == false).OrderByDescending(x => x.Group.GroupName).ToList();
         }
 
         public int SoftDelete(int id)
@@ -79,10 +79,11 @@ namespace My_OPR.Repositories.Data
             .Include(x => x.DetailRegister)
             .Include(x => x.DetailRegister.RegisteredForm)
             .Include(x => x.DetailRegister.RegisteredForm.Group)
+
             .Select(x => new
             {
                 Name = x.DetailRegister.RegisteredForm.Group.GroupName,
-            });
+            }).OrderByDescending(x => x.Name);
 
             return result;
         }
@@ -92,7 +93,7 @@ namespace My_OPR.Repositories.Data
             {
                 Name = x.Name,
                 Id = x.Id
-            });
+            }).OrderByDescending(x => x.Name).ThenByDescending(x => x.Id);
 
             return getall;
         }

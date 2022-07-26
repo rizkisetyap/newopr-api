@@ -90,21 +90,32 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 Name = x.FileName,
             });
         }
+        public IQueryable DokumenUtamaISR()
+        {
+            return _context.ISOCores.Select(x => new
+            {
+                Params = new
+                {
+                    Id = x.Id
+                }
+            });
+        }
         #endregion
         #region Total File
         public List<TotalFileVM> TotalFile()
         {
             List<TotalFileVM> result = new List<TotalFileVM>();
-            var group = _context.Groups.Select(x => new {
-                Id=x.Id,
+            var group = _context.Groups.Select(x => new
+            {
+                Id = x.Id,
                 Name = x.GroupName
             }).ToList();
-            foreach(var item in group)
+            foreach (var item in group)
             {
                 TotalFileVM total = new TotalFileVM();
                 var cekfile = _context.FileRegisteredIsos.Include(x => x.DetailRegister)
-                .Include(x=>x.DetailRegister.RegisteredForm)
-                .Where(x=> x.IsDelete == false && x.DetailRegister.isActive == true 
+                .Include(x => x.DetailRegister.RegisteredForm)
+                .Where(x => x.IsDelete == false && x.DetailRegister.isActive == true
                 && x.DetailRegister.RegisteredForm.GroupId == item.Id);
                 total.Nama = item.Name;
                 total.Jumlah = cekfile.Count();
@@ -114,20 +125,21 @@ namespace My_OPR.Repositories.Data.DokumenIso
             return result;
         }
         #endregion
-        #region 
+        #region TOTAL lAYANAN
         public List<TotalFileVM> TotalLayanan(int GroupId)
         {
             List<TotalFileVM> result = new List<TotalFileVM>();
-            var service = _context.Services.Where(x => x.GroupId == GroupId).Select(x => new {
-                Id=x.Id,
-                Name=x.Name
+            var service = _context.Services.Where(x => x.GroupId == GroupId).Select(x => new
+            {
+                Id = x.Id,
+                Name = x.Name
             }).ToList();
-            foreach(var item in service)
+            foreach (var item in service)
             {
                 TotalFileVM tolay = new TotalFileVM();
                 var cekfile = _context.FileRegisteredIsos.Include(x => x.DetailRegister)
-                .Include(x=>x.DetailRegister.RegisteredForm)
-                .Where(x=> x.IsDelete == false && x.DetailRegister.isActive == true 
+                .Include(x => x.DetailRegister.RegisteredForm)
+                .Where(x => x.IsDelete == false && x.DetailRegister.isActive == true
                 && x.DetailRegister.RegisteredForm.ServiceId == item.Id);
                 tolay.Nama = item.Name;
                 tolay.Jumlah = cekfile.Count();
@@ -137,20 +149,21 @@ namespace My_OPR.Repositories.Data.DokumenIso
             return result;
         }
         #endregion
-        #region 
+        #region TOTAL UNIT
         public List<TotalFileVM> TotalUnit(int ServiceId)
         {
             List<TotalFileVM> result = new List<TotalFileVM>();
-            var unit = _context.Units.Where(x => x.ServiceId == ServiceId).Select(x => new {
-                Id=x.Id,
-                Name=x.Name
+            var unit = _context.Units.Where(x => x.ServiceId == ServiceId).Select(x => new
+            {
+                Id = x.Id,
+                Name = x.Name
             }).ToList();
-            foreach(var item in unit)
+            foreach (var item in unit)
             {
                 TotalFileVM tonit = new TotalFileVM();
                 var cekfile = _context.FileRegisteredIsos.Include(x => x.DetailRegister)
-                .Include(x=>x.DetailRegister.RegisteredForm)
-                .Where(x=> x.IsDelete == false && x.DetailRegister.isActive == true 
+                .Include(x => x.DetailRegister.RegisteredForm)
+                .Where(x => x.IsDelete == false && x.DetailRegister.isActive == true
                 && x.DetailRegister.RegisteredForm.SubLayananId == item.Id);
                 tonit.Nama = item.Name;
                 tonit.Jumlah = cekfile.Count();
@@ -160,26 +173,28 @@ namespace My_OPR.Repositories.Data.DokumenIso
             return result;
         }
         #endregion
-        #region
+        #region LIST FORMS
         public List<TotalFormVm> ListForm()
         {
             List<TotalFormVm> result = new List<TotalFormVm>();
-            var groups = _context.Groups.Where(x=>x.IsDelete == false).Select(x=> new{
+            var groups = _context.Groups.Where(x => x.IsDelete == false).Select(x => new
+            {
                 Id = x.Id,
                 Name = x.GroupName
             }).ToList();
-            foreach(var group in groups)
+            foreach (var group in groups)
             {
                 TotalFormVm vm = new TotalFormVm();
                 vm.namaGroup = group.Name;
                 vm.idGroup = group.Id;
                 var listForms = _context.DetailRegisters
-                .Include(x=>x.RegisteredForm)
-                .Include(x=>x.RegisteredForm.Group)
-                .Include(x=>x.RegisteredForm.Service)
-                .Include(x=>x.RegisteredForm.Unit)
-                .Where(x=>(x.isActive == true && x.IsDelete == false) && x.RegisteredForm.IsDelete == false && x.RegisteredForm.GroupId == group.Id)
-                .Select(x=> new RegVM {
+                .Include(x => x.RegisteredForm)
+                .Include(x => x.RegisteredForm.Group)
+                .Include(x => x.RegisteredForm.Service)
+                .Include(x => x.RegisteredForm.Unit)
+                .Where(x => (x.isActive == true && x.IsDelete == false) && x.RegisteredForm.IsDelete == false && x.RegisteredForm.GroupId == group.Id)
+                .Select(x => new RegVM
+                {
                     Id = x.Id,
                     idForm = x.RegisteredFormId,
                     namaForm = x.RegisteredForm.Name,
@@ -190,7 +205,56 @@ namespace My_OPR.Repositories.Data.DokumenIso
 
                 result.Add(vm);
             }
-            return result; 
+            return result;
+        }
+        #endregion
+        #region Dokumen Inti Admin
+        public IQueryable DokumenIntiGetAll()
+        {
+            var files = _context.FileRegisteredIsos
+                .Include(x => x.DetailRegister)
+                .Include(x => x.DetailRegister.RegisteredForm)
+                .Include(x => x.DetailRegister.RegisteredForm.JenisDokumen)
+                .Include(x => x.DetailRegister.RegisteredForm.Group)
+                .Where(x => x.IsDelete == false && x.DetailRegister.IsDelete == false && x.DetailRegister.isActive == true && x.DetailRegister.RegisteredForm.JenisDokumen.KategoriDokumenId == 1)
+                .Select(x => new
+                {
+                    Id = x.Id,
+                    fileName = x.FileName,
+                    filePath = x.FilePath,
+                    formNumber = x.DetailRegister.RegisteredForm.FormNumber,
+                    createDate = x.DetailRegister.CreateDate,
+                    lastUpdate = x.DetailRegister.UpdateDate,
+                    kelompok = x.DetailRegister.RegisteredForm.Group
+                });
+            return files;
+        }
+        #endregion
+        #region Dokumen Utama Admin
+        public IQueryable DokumenUtamaGetAll()
+        {
+            var files = _context.HistoryISOs.Include(x => x.ISOCore).Include(x => x.ISOCore.Group).Include(x => x.ISOCore.JenisDocument)
+                .Where(x => x.IsDelete == false).Select(x => new
+                {
+                    Id = x.Id,
+                    name = x.ISOCore.Name,
+                    group = x.ISOCore.Group.GroupName,
+                    revisi = x.Revision,
+                    jenisDokumen = x.ISOCore.JenisDocument.Name,
+                    JDID = x.ISOCore.JenisDocument.Id,
+                    GID = x.ISOCore.GroupId,
+
+                });
+
+            return files;
+        }
+        #endregion
+        #region History Dokumen Utama
+        public IQueryable HistoryDokumenUtama(int jdid, int gid)
+        {
+            var history = _context.HistoryISOs.Include(x => x.ISOCore).Where(x => x.ISOCore.JenisDocumentId == jdid && x.ISOCore.GroupId == gid).OrderByDescending(x => x.ISOCore.CreatedDate);
+
+            return history;
         }
         #endregion
     }

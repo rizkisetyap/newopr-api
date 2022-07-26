@@ -1,7 +1,6 @@
-using My_OPR.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 using My_OPR.Data;
 using My_OPR.Models.DocumentISO;
-using Microsoft.EntityFrameworkCore;
 namespace My_OPR.Repositories.Data.DokumenIso
 {
     public class JenisDokumenRepository : GenericRepository<ApplicationDBContext, JenisDocument, int>
@@ -30,7 +29,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
         }
         public IQueryable FilterByKategori(int? kategoriId)
         {
-            return _context.JenisDocuments.Include(x => x.KategoriDokumen).Where(x => x.KategoriDokumenId == kategoriId);
+            return _context.JenisDocuments.Include(x => x.KategoriDokumen).Where(x => x.KategoriDokumenId == kategoriId).OrderBy(x => x.Name);
         }
     }
 }

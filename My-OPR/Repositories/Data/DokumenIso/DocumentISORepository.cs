@@ -22,6 +22,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
                 join GRP in _context.Groups on SVC.GroupId equals GRP.Id
                 join KD in _context.JenisDocuments on RF.JenisDokumenId equals KD.Id
                 where GRP.Id == GroupId && Docis.IsDelete == false
+                orderby Docis.CreateDate descending
                 select new
                 {
                     Id = Docis.Id,
@@ -64,6 +65,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
             ;
 
             return result;
+
 
         }
     }

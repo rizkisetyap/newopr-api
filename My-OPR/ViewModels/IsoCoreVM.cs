@@ -10,4 +10,9 @@ namespace My_OPR.ViewModels
         public FileInfo file { get; set; }
         public int ServiceId { get; set; }
     }
+    public class UpdateIsoCoreVM
+    {
+        public string? name { get; set; }
+        public FileInfo File { get; set; }
+    }
 }

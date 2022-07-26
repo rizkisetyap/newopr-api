@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
-using My_OPR.Data;
 using Microsoft.EntityFrameworkCore;
+using My_OPR.Data;
 using My_OPR.Models.Master;
 
 namespace My_OPR.Controllers
@@ -22,7 +22,7 @@ namespace My_OPR.Controllers
         {
 
 
-            var data = await _context.Units.Where(x => x.IsDelete == false && x.ServiceId == serviceId).ToListAsync();
+            var data = await _context.Units.Where(x => x.IsDelete == false && x.ServiceId == serviceId).OrderBy(x => x.ShortName).ThenBy(x => x.Name).ToListAsync();
 
             return Ok(data);
         }
@@ -92,7 +92,7 @@ namespace My_OPR.Controllers
         [Route("layanan")]
         public IActionResult GetByLayanan(int? id)
         {
-            var result = _context.Units.Where(x => x.ServiceId == id);
+            var result = _context.Units.Where(x => x.ServiceId == id).OrderBy(x => x.ShortName).ThenBy(x => x.Name);
 
             return Ok(result);
         }
@@ -104,6 +104,8 @@ namespace My_OPR.Controllers
                           join S in _context.Services on U.ServiceId equals S.Id
                           join G in _context.Groups on S.GroupId equals G.Id
                           where G.Id == GroupId
+                          orderby U.ShortName ascending
+                          orderby U.Name ascending
                           select U
                 ).ToList();
 

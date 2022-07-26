@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using My_OPR.Models.Core;
+using System.Text.Json.Serialization;
 namespace My_OPR.Models.Master
 {
     public class SubLayanan : BaseModel
@@ -9,6 +9,6 @@ namespace My_OPR.Models.Master
         public string? ShortName { get; set; }
         public int? ServiceId { get; set; }
         [JsonIgnore]
-        public ICollection<Service>? Services { get; set; }
+        public Service? Services { get; set; }
     }
 }

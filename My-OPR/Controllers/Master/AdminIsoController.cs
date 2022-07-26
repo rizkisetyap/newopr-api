@@ -45,7 +45,7 @@ namespace My_OPR.Controllers.Master
             return Ok(_repository.Count(GroupId, ServiceId, unitId));
         }
         #endregion
-        #region
+        #region History
         [HttpGet]
         [Route("history")]
         public IActionResult History(int fileId)
@@ -60,6 +60,12 @@ namespace My_OPR.Controllers.Master
         public IActionResult GetISR()
         {
             return Ok(_repository.FilesISR());
+        }
+        [HttpGet]
+        [Route("DokumenUtamaISR")]
+        public IActionResult GetPath()
+        {
+            return Ok(_repository.DokumenUtamaISR());
         }
         #endregion
         #region 
@@ -96,6 +102,31 @@ namespace My_OPR.Controllers.Master
         {
             var result = _repository.ListForm();
             return Ok(result);
+        }
+        #endregion
+        #region Dokumen inti
+        [HttpGet]
+        [Route("DokumenInti")]
+        public IActionResult GetDokumenInti()
+        {
+            return Ok(_repository.DokumenIntiGetAll());
+        }
+        #endregion
+        #region Dokumen Utama
+        [HttpGet]
+        [Route("DokumenUtama")]
+        public IActionResult GetDokumenUtamaAll()
+        {
+            var result = _repository.DokumenUtamaGetAll();
+            return Ok(result);
+        }
+        #endregion
+        #region DokumenUtamaHistory
+        [HttpGet]
+        [Route("DokumenUtama/History")]
+        public IActionResult HistoryDokumenUtama(int jdid, int gid)
+        {
+            return Ok(_repository.HistoryDokumenUtama(jdid, gid));
         }
         #endregion
     }

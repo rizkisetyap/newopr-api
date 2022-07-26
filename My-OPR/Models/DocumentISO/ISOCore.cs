@@ -1,5 +1,5 @@
-﻿using System.Text.Json.Serialization;
-using My_OPR.Models.Master;
+﻿using My_OPR.Models.Master;
+using System.Text.Json.Serialization;
 namespace My_OPR.Models.DocumentISO
 {
     public class ISOCore
@@ -7,9 +7,9 @@ namespace My_OPR.Models.DocumentISO
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? FilePath { get; set; }
-        public int? UnitId { get; set; }
-        public SubLayanan? Unit { get; set; }
-        public int? JenisDokumenId { get; set; }
+        public int? GroupId { get; set; }
+        public Group? Group { get; set; }
+        public int? JenisDocumentId { get; set; }
         [JsonIgnore]
         public JenisDocument? JenisDocument { get; set; }
         public DateTime? CreatedDate { get; set; }

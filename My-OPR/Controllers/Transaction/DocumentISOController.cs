@@ -107,17 +107,17 @@ namespace My_OPR.Controllers.Transaction
             {
                 var filelama = _context.FileRegisteredIsos.Include(x => x.DetailRegister).Where(x => x.Id == id && x.IsDelete == false).FirstOrDefault();
 
+                var idDetLama = filelama.DetailRegisterId;
                 filelama.IsDelete = true;
                 filelama.DeleteDate = DateTime.Now;
                 _context.Update(filelama);
                 _context.SaveChanges();
 
-                var idDetLama = filelama.DetailRegisterId;
 
-                var detLama = _context.DetailRegisters.Where(x => x.Id == idDetLama && x.isActive == true)
+                var detLama = _context.DetailRegisters.Where(x => x.Id == idDetLama && x.isActive == true && x.IsDelete == false)
                 .Include(x => x.RegisteredForm)
+                .Include(x => x.RegisteredForm.Group)
                 .Include(x => x.RegisteredForm.Service)
-                .Include(x => x.RegisteredForm.Service.Group)
                 .Include(x => x.RegisteredForm.Unit)
                 .FirstOrDefault();
 
@@ -143,9 +143,6 @@ namespace My_OPR.Controllers.Transaction
                 _context.SaveChanges();
                 FileRegisteredIso fileBaru = new FileRegisteredIso();
                 // Binding *
-                var Group = detLama.RegisteredForm.Service.Group.GroupName;
-                var Layanan = detLama.RegisteredForm.Service.ShortName;
-                var Unit = detLama.RegisteredForm.Unit.Name;
                 var reg = _context.DetailRegisters
                 .Include(x => x.RegisteredForm)
                 .Include(x => x.RegisteredForm.JenisDokumen)
