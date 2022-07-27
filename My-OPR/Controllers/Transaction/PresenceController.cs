@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using My_OPR.Data;
 using My_OPR.Models.Master;
 using My_OPR.Repositories.Data;
 using My_OPR.ViewModels;
@@ -16,10 +17,12 @@ namespace My_OPR.Controllers.Transaction
     {
         private readonly EventRepository _repository;
         private readonly EmployeeRepository _empoyee;
-        public PresenceController(EventRepository repository, EmployeeRepository empoyee)
+        private readonly ApplicationDBContext _context;
+        public PresenceController(EventRepository repository, EmployeeRepository empoyee, ApplicationDBContext context)
         {
             _repository = repository;
             _empoyee = empoyee;
+            _context = context;
         }
 
         public static byte[] BitmapToByteArray(Bitmap bitmap)
@@ -106,18 +109,75 @@ namespace My_OPR.Controllers.Transaction
         [Route("/api/[controller]")]
         public ActionResult Presences(int id, string token)
         {
-            int result = 0;
-            if (string.IsNullOrEmpty(token))
+            try
             {
-                throw new Exception("Error: Please Login!");
+                int result = 0;
+                if (string.IsNullOrEmpty(token))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new { message = "Please Login" });
+                }
+                else
+                {
+                    var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                    string npp = jwt.Claims.First(c => c.Type == "npp").Value;
+                    if (string.IsNullOrEmpty(npp))
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, "Invalid Credentials");
+                    }
+
+                    result = _repository.EventPresence(id, npp);
+                    return Ok(result);
+                }
             }
-            else
+            catch (Exception e)
             {
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                string npp = jwt.Claims.First(c => c.Type == "npp").Value;
-                result = _repository.EventPresence(id, npp);
+
+                return BadRequest(e.Message);
             }
-            return Ok(result);
+
+        }
+        [HttpGet]
+        [Route("event")]
+        public IActionResult GetLaporan(int Id)
+        {
+
+            var daftarAbsen = _context.Presences
+                .Include(x => x.Employee)
+                .Include(x => x.Employee.Service)
+                .Include(x => x.Employee.Service.Group)
+                .Include(x => x.Event)
+                .Where(x => x.EventId == Id)
+                .OrderBy(x => x.CreateDate)
+                .Select(x => new
+                {
+                    Id = x.Id,
+                    Nama = x.Employee.FirstName + " " + x.Employee.LastName,
+                    Npp = x.Employee.NPP,
+                    TanggalAbsen = x.CreateDate,
+                    Kelompok = x.Employee.Service.Group.GroupName
+
+
+                });
+
+            return Ok(daftarAbsen);
+        }
+        [HttpGet]
+        [Route("employee")]
+        public IActionResult GetEmployeePressence(string npp)
+        {
+            var list = _context.Presences
+                .Include(x => x.Event)
+                .Where(x => x.NPP == npp)
+                .Select(x => new
+                {
+                    IdEvent = x.EventId,
+                    NamaEvent = x.Event.EventName,
+                    TanggalMulai = x.Event.StartDate,
+                    TanggalSelesai = x.Event.EndDate,
+                    WaktuAbsen = x.CreateDate
+                }).ToList();
+
+            return Ok(list);
         }
     }
 }

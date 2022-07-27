@@ -17,6 +17,14 @@ namespace My_OPR.Repositories.Data
         {
             return _Context.Events.Where(x => x.IsDelete == false).OrderByDescending(x => x.CreateDate).ToList();
         }
+        public List<Event> GetAllPublished()
+        {
+            return _Context.Events.Where(x => x.IsActive == true && x.IsDelete == false).OrderByDescending(x => x.CreateDate).ToList();
+        }
+        public Event GetActiveEvent(int id)
+        {
+            return _Context.Events.Where(x => x.IsDelete == false && x.IsActive == true && x.Id == id).FirstOrDefault();
+        }
 
         public int SoftDelete(int id)
         {
@@ -32,6 +40,16 @@ namespace My_OPR.Repositories.Data
 
         public int EventPresence(int eventId, string npp)
         {
+            var eventExist = _Context.Events.Where(x => x.Id == eventId && x.IsDelete == false && x.IsActive == true).FirstOrDefault();
+            if (eventExist == null)
+            {
+                throw new Exception("Event Not found or expired");
+            }
+            var isAlreadyPresence = _Context.Presences.Any(x => x.EventId == eventId && x.NPP == npp);
+            if (isAlreadyPresence)
+            {
+                throw new Exception("Kamu sudah absen!!!");
+            }
             var presence = new Presence();
             presence.CreateDate = DateTime.Now;
             presence.EventId = eventId;

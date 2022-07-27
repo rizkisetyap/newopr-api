@@ -310,29 +310,6 @@ namespace My_OPR.Repositories.Data.DokumenIso
         }
         public string GeneratedNoForms(int DetailRegsiterId)
         {
-            //var DetailReg = (from DR in _context.DetailRegisters
-            //                 join RF in _context.RegisteredForms on DR.RegisteredFormId equals RF.Id into RegisterForms
-            //                 from RegisterForm in RegisterForms.DefaultIfEmpty()
-
-            //                 join G in _context.Groups on RegisterForm.GroupId equals G.Id into Groups
-            //                 from Group in Groups.DefaultIfEmpty()
-            //                 join S in _context.Services on RegisterForm.ServiceId equals S.Id
-            //                 join U in _context.Units on RegisterForm.SubLayananId equals U.Id
-            //                 join JD in _context.JenisDocuments on RegisterForm.JenisDokumenId equals JD.Id
-            //                 where DR.Id == DetailRegsiterId && DR.isActive == true
-            //                 select new
-            //                 {
-            //                     Kelompok = Group.GroupName,
-            //                     Layanan = S.ShortName,
-            //                     Unit = U.ShortName,
-            //                     KategoriDokumenId = JD.KategoriDokumenId,
-            //                     Bulan = RegisterForm.Month < 10 ? "0" + RegisterForm.Month : RegisterForm.Month.ToString(),
-            //                     Tahun = RegisterForm.Year.ToString().Substring(2),
-            //                     Revisi = DR.Revisi < 10 ? "0" + DR.Revisi : DR.Revisi.ToString(),
-            //                     NoUrut = RegisterForm.NoUrut < 10 ? "0" + RegisterForm.NoUrut : RegisterForm.NoUrut.ToString()
-            //                 }
-
-            //).FirstOrDefault();
             var DetailReg = _context.DetailRegisters
                 .Include(x => x.RegisteredForm)
                 .Include(x => x.RegisteredForm.Group)
@@ -360,7 +337,7 @@ namespace My_OPR.Repositories.Data.DokumenIso
             else
             {
                 noForm = noForm + "." + DetailReg.Kelompok + "." + (DetailReg.Layanan == DetailReg.Kelompok ? "" : DetailReg.Layanan + ".") +
-                    (DetailReg.Unit == DetailReg.Layanan ? "" : DetailReg.Unit + ".")
+                    ((DetailReg.Unit == DetailReg.Layanan || DetailReg.Unit == "PPG") ? "" : DetailReg.Unit + ".")
                     + DetailReg.NoUrut + "/" + DetailReg.Bulan
                          + "/" +
                          DetailReg.Tahun
