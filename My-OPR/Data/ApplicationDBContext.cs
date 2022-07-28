@@ -50,7 +50,11 @@ namespace My_OPR.Data
         public DbSet<ZoomModel> Zooms { get; set; }
         public DbSet<ZoomStatus> ZoomStatuses { get; set; }
         #endregion
-
+        #region RequestOvertime
+        public DbSet<RequestOvertimeStatus> RequestOvertimeStatuses { get; set; }
+        public DbSet<Overtime> Overtimes { get; set; }
+        public DbSet<OvertimeDetail> OvertimeDetails { get; set; }
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

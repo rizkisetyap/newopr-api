@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using My_OPR.Data;
 
@@ -11,9 +12,10 @@ using My_OPR.Data;
 namespace My_OPR.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220728034613_RemoveOvertime")]
+    partial class RemoveOvertime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -780,87 +782,6 @@ namespace My_OPR.Migrations
                     b.ToTable("Contents");
                 });
 
-            modelBuilder.Entity("My_OPR.Models.Transaction.Overtime", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Alasan")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApprovalId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeleteDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDelete")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("JamMulai")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("JamSelesai")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Nama")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("Tanggal")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApprovalId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Overtimes");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.Transaction.OvertimeDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Catatan")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("OvertimeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("RequestOvertimeStatusId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RequesterId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("TanggalApprove")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OvertimeId");
-
-                    b.HasIndex("RequestOvertimeStatusId");
-
-                    b.HasIndex("RequesterId");
-
-                    b.ToTable("OvertimeDetails");
-                });
-
             modelBuilder.Entity("My_OPR.Models.Transaction.Presence", b =>
                 {
                     b.Property<int>("Id")
@@ -893,22 +814,6 @@ namespace My_OPR.Migrations
                     b.HasIndex("NPP");
 
                     b.ToTable("Presences");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.Transaction.RequestOvertimeStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RequestOvertimeStatuses");
                 });
 
             modelBuilder.Entity("My_OPR.Models.ZoomScheduler.Scheduler", b =>
@@ -1172,48 +1077,6 @@ namespace My_OPR.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.Transaction.Overtime", b =>
-                {
-                    b.HasOne("My_OPR.Models.Master.Employee", "Approval")
-                        .WithMany()
-                        .HasForeignKey("ApprovalId");
-
-                    b.HasOne("My_OPR.Models.Master.Employee", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Approval");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("My_OPR.Models.Transaction.OvertimeDetail", b =>
-                {
-                    b.HasOne("My_OPR.Models.Transaction.Overtime", "Overtime")
-                        .WithMany()
-                        .HasForeignKey("OvertimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("My_OPR.Models.Transaction.RequestOvertimeStatus", "RequestOvertimeStatus")
-                        .WithMany()
-                        .HasForeignKey("RequestOvertimeStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("My_OPR.Models.Master.Employee", "Requester")
-                        .WithMany()
-                        .HasForeignKey("RequesterId");
-
-                    b.Navigation("Overtime");
-
-                    b.Navigation("RequestOvertimeStatus");
-
-                    b.Navigation("Requester");
                 });
 
             modelBuilder.Entity("My_OPR.Models.Transaction.Presence", b =>
