@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using My_OPR.Data;
 using My_OPR.Models.Master;
 using My_OPR.ViewModels;
-using Dapper;
 
 namespace My_OPR.Repositories.Data
 {
@@ -41,7 +40,7 @@ namespace My_OPR.Repositories.Data
             // {
             //     Npp = npp
             // }).ToList();
-            var query = _context.AccountRoles.Include(x=> x.Role).Where(x=>x.NPP == npp).Select(x=>x.Role).ToList();
+            var query = _context.AccountRoles.Include(x => x.Role).Where(x => x.NPP == npp).Select(x => x.Role).ToList();
 
             List<string> roles = new List<string>();
 
@@ -95,9 +94,11 @@ namespace My_OPR.Repositories.Data
                 Gender = model.gender,
                 Service = _context.Services.FirstOrDefault(s => s.Id == model.ServiceId),
                 Position = _context.Positions.FirstOrDefault(p => p.Id == model.PositionId),
+                GroupId = model.GroupId,
                 CreateDate = DateTime.Now,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                DateOfBirth = model.DateOfBirth,
             };
             _context.Employees.Add(employee);
             foreach (var item in model.roles!)

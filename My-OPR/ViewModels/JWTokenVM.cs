@@ -15,10 +15,8 @@ namespace My_OPR.ViewModels
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? NPP { get; set; }
-        public string? Service { get; set; }
         public ICollection<String>? AccountRole { get; set; }
-        public string? Kelompok { get; set; }
-        public string? Jabatan { get; set; }
         public Employee? Employee { get; set; }
+
     }
 }

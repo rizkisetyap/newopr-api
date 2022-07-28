@@ -25,6 +25,8 @@ namespace My_OPR.Models.Master
         [JsonIgnore]
 
         public virtual ICollection<Presence>? Presences { get; set; }
+        public int? GroupId { get; set; }
+        public Group? Group { get; set; }
 
     }
 
