@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using My_OPR.Data;
 
@@ -11,9 +12,10 @@ using My_OPR.Data;
 namespace My_OPR.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220728062925_Fixrelasi")]
+    partial class Fixrelasi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1115,7 +1117,7 @@ namespace My_OPR.Migrations
 
             modelBuilder.Entity("My_OPR.Models.Master.Employee", b =>
                 {
-                    b.HasOne("My_OPR.Models.Master.Group", "Group")
+                    b.HasOne("My_OPR.Models.Master.Group", null)
                         .WithMany("Employees")
                         .HasForeignKey("GroupId");
 
@@ -1128,8 +1130,6 @@ namespace My_OPR.Migrations
                     b.HasOne("My_OPR.Models.Master.Service", "Service")
                         .WithMany("Employees")
                         .HasForeignKey("ServiceId");
-
-                    b.Navigation("Group");
 
                     b.Navigation("Position");
 

@@ -1,17 +1,14 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using My_OPR.Data;
+using My_OPR.Lib;
 using My_OPR.Repositories.Data;
+using My_OPR.Repositories.Data.DokumenIso;
+using My_OPR.Repositories.Data.Transaction;
 using My_OPR.Repositories.Data.Zoom;
 using System.Text;
-using My_OPR.Controllers;
-using My_OPR.Lib;
-using Microsoft.Extensions.FileProviders;
-using My_OPR.Models.Master;
-using My_OPR.Repositories.Data.DokumenIso;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +43,8 @@ services.AddScoped<ServiceRepository>();
 services.AddScoped<ZoomStatusRepository>();
 services.AddScoped<ZoomSchedulerRepository>();
 services.AddScoped<ZoomRepository>();
+
+services.AddScoped<OvertimeRepository>();
 
 #endregion
 #region 

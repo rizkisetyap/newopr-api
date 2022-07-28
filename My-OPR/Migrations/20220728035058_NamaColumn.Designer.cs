@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using My_OPR.Data;
 
@@ -11,9 +12,10 @@ using My_OPR.Data;
 namespace My_OPR.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220728035058_NamaColumn")]
+    partial class NamaColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -810,6 +812,9 @@ namespace My_OPR.Migrations
                     b.Property<string>("Nama")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("OvertimeDetailId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("Tanggal")
                         .HasColumnType("datetime2");
 
@@ -823,6 +828,8 @@ namespace My_OPR.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApprovalId");
+
+                    b.HasIndex("OvertimeDetailId");
 
                     b.HasIndex("UserId");
 
@@ -838,9 +845,6 @@ namespace My_OPR.Migrations
                     b.Property<string>("Catatan")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("OvertimeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("RequestOvertimeStatusId")
                         .HasColumnType("int");
 
@@ -851,8 +855,6 @@ namespace My_OPR.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OvertimeId");
 
                     b.HasIndex("RequestOvertimeStatusId");
 
@@ -1115,7 +1117,7 @@ namespace My_OPR.Migrations
 
             modelBuilder.Entity("My_OPR.Models.Master.Employee", b =>
                 {
-                    b.HasOne("My_OPR.Models.Master.Group", "Group")
+                    b.HasOne("My_OPR.Models.Master.Group", null)
                         .WithMany("Employees")
                         .HasForeignKey("GroupId");
 
@@ -1128,8 +1130,6 @@ namespace My_OPR.Migrations
                     b.HasOne("My_OPR.Models.Master.Service", "Service")
                         .WithMany("Employees")
                         .HasForeignKey("ServiceId");
-
-                    b.Navigation("Group");
 
                     b.Navigation("Position");
 
@@ -1182,6 +1182,12 @@ namespace My_OPR.Migrations
                         .WithMany()
                         .HasForeignKey("ApprovalId");
 
+                    b.HasOne("My_OPR.Models.Transaction.OvertimeDetail", "OvertimeDetail")
+                        .WithMany()
+                        .HasForeignKey("OvertimeDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("My_OPR.Models.Master.Employee", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1190,17 +1196,13 @@ namespace My_OPR.Migrations
 
                     b.Navigation("Approval");
 
+                    b.Navigation("OvertimeDetail");
+
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("My_OPR.Models.Transaction.OvertimeDetail", b =>
                 {
-                    b.HasOne("My_OPR.Models.Transaction.Overtime", "Overtime")
-                        .WithMany()
-                        .HasForeignKey("OvertimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("My_OPR.Models.Transaction.RequestOvertimeStatus", "RequestOvertimeStatus")
                         .WithMany()
                         .HasForeignKey("RequestOvertimeStatusId")
@@ -1210,8 +1212,6 @@ namespace My_OPR.Migrations
                     b.HasOne("My_OPR.Models.Master.Employee", "Requester")
                         .WithMany()
                         .HasForeignKey("RequesterId");
-
-                    b.Navigation("Overtime");
 
                     b.Navigation("RequestOvertimeStatus");
 
