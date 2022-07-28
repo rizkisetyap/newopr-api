@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using My_OPR.Data;
-using My_OPR.Models.Master;
 using My_OPR.Repositories.Data;
 using My_OPR.ViewModels;
 namespace My_OPR.Controllers.Master
@@ -48,7 +47,7 @@ namespace My_OPR.Controllers.Master
             return Ok(_employeeRepository.Register(model));
         }
         [HttpPut]
-        public ActionResult Update(Employee employee)
+        public ActionResult Update(UpdateEmployeeVM employee)
         {
             return Ok(_employeeRepository.Update(employee));
         }
