@@ -95,30 +95,44 @@ namespace My_OPR.Repositories.Data
             throw new Exception("Data Not Found!");
         }
 
-        public Employee Update(Employee employee)
+        public Employee Update(UpdateEmployeeVM model)
         {
-            var data = Get(employee.NPP);
+            var data = Get(model.Employee.NPP);
             if (data != null)
             {
                 string oldNpp = data.NPP;
-                data.NPP = employee.NPP;
-                data.FirstName = employee.FirstName;
-                data.LastName = employee.LastName;
-                data.Gender = employee.Gender;
-                data.PhoneNumber = employee.PhoneNumber;
-                data.PositionId = employee.PositionId;
-                data.ServiceId = employee.ServiceId;
-                data.DateOfBirth = employee.DateOfBirth;
+                data.NPP = model.Employee.NPP;
+                data.FirstName = model.Employee.FirstName;
+                data.LastName = model.Employee.LastName;
+                data.Gender = model.Employee.Gender;
+                data.PhoneNumber = model.Employee.PhoneNumber;
+                data.PositionId = model.Employee.PositionId;
+                data.ServiceId = model.Employee.ServiceId;
+                data.GroupId = model.Employee.GroupId;
+                data.DateOfBirth = model.Employee.DateOfBirth;
                 _context.Entry(data).State = EntityState.Modified;
 
                 Account account = _context.Accounts.Find(data.NPP);
-                string password = "BNI" + employee.NPP;
-                account.NPP = employee.NPP;
-                account.UserName = employee.NPP;
+                string password = "BNI" + model.Employee.NPP;
+                account.NPP = model.Employee.NPP;
+                account.UserName = model.Employee.NPP;
                 account.Password = BCrypt.Net.BCrypt.HashPassword(password);
                 _context.Entry(account).State = EntityState.Modified;
-                _context.SaveChanges();
+                List<AccountRole> accountRoles = _context.AccountRoles.Where(x => x.NPP == account.NPP).ToList();
+                _context.RemoveRange(accountRoles);
+                foreach (var item in model.roles!)
+                {
+                    Role role = _context.Roles.FirstOrDefault(role => role.RoleName == item.RoleName)!;
+                    AccountRole accountRole = new AccountRole
+                    {
+                        NPP = account.NPP,
+                        Role = role
+                    };
+                    _context.AccountRoles.Add(accountRole);
 
+                }
+
+                _context.SaveChanges();
                 return data;
             }
             throw new Exception("Employee not exist");
